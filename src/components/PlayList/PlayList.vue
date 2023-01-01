@@ -157,11 +157,16 @@ export default {
       this.$once("hook:beforeDestroy", () => {
         clearInterval(this.processInterval);
       });
+      let pl = this.playList;
+      this.musicType = this.musicType || Object.keys(pl)[0];
       let item = this.playList[this.musicType][this.albumIndex];
+
       this.reset(item);
+      console.log(`reset to ${this.currentSong} ${this.videoId}`);
     },
     reset(item) {
       this.currentSong = item.songs[this.currentIndex].song;
+      this.currentSongInfo = item.songs[this.currentIndex];
       this.videoId = item.songs[this.currentIndex].videoId;
       this.currentPlayList = item.songs || [];
       this.currentAlbumImg = item.img;
