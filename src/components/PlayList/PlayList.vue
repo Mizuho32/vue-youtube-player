@@ -129,6 +129,19 @@ export default {
   },
 
   methods: {
+    ready() {
+      // seek to the time (autoPlay) after video load finished
+      let vm = this;
+      let itv_id = setInterval(()=>{
+        vm.player.getVideoUrl().then(p=>{
+          if (p !== undefined && p.includes(vm.videoId)) {
+            console.log(`loaded video ${vm.currentSong} (${p})`, vm.player);
+            clearInterval(itv_id);
+            vm.autoPlay();
+          }
+        });
+      }, 100);
+    },
     checkPopovers($event) {
       if ($event.target.nodeName !== "I") {
         this.currentPopoverIndex = -1;
@@ -158,6 +171,17 @@ export default {
       this.copyright = item.copyright;
     },
     autoPlay() {
+      let start = this.currentSongInfo.start
+      if (start) {
+        setTimeout(()=> {
+          this.player.seekTo(start).then(v=>{
+            this.player
+              .getCurrentTime()
+              .then(p => console.log(`change complete seek to ${start} (actual ${p})`));
+          });
+        }, 200)
+      }
+
       // 自動撥放
       if (!this.isPlay) {
         this.player.playVideo();
@@ -172,6 +196,9 @@ export default {
     togglePlay() {
       // 切換撥放或停止
       this.isPlay = !this.isPlay;
+
+      console.log(`toggle, ${this.currentSong}`);
+
       this.player.playVideo();
       if (!this.isPlay) {
         this.player.pauseVideo();
@@ -184,7 +211,18 @@ export default {
       if (total <= 1) return;
       this.currentIndex = (this.currentIndex + click + total) % total;
       this.init();
-      this.player.nextVideo();
+
+      // Old video load code
+      //this.player.nextVideo();
+      //setTimeout(()=>this.player.seekTo(this.currentSongStart), 200)
+      /*this.player.loadVideoById(new String(this.videoId)).then(()=>{
+        let start = this.currentSongInfo.start
+        if (start) {
+          console.log(`change complete seek to ${start}`);
+          setTimeout(()=>this.player.seekTo(start), 200)
+        }
+      });*/
+
       this.$nextTick(function() {
         this.autoPlay();
       });
@@ -215,17 +253,25 @@ export default {
       let progressWidth = this.$refs.progressBar.offsetWidth;
       let x = e.offsetX;
       this.newTime = Math.floor((x / progressWidth) * this.duration);
-      this.player.seekTo(this.newTime);
+      let offset = this.currentSongInfo.start || 0;
+      this.player.seekTo(offset + this.newTime);
     },
     async updateDuration() {
       // 計算歌曲總時間
-      this.duration = await this.player.getDuration();
+      this.duration = this.currentSongInfo.end ? this.currentSongInfo.end - this.currentSongInfo.start : await this.player.getDuration();
       this.processInterval = setInterval(() => {
         this.player.getCurrentTime().then(currentTime => {
-          // 調整進度軸長度 time:currentTime/totaltime:duration
-          this.timeLine = (currentTime / this.duration) * 100;
-          this.currentTime = currentTime;
-          this.getPlayerState();
+          if (this.currentSongInfo.end && this.currentSongInfo.end < currentTime) {
+            this.loopSong();
+          } else {
+            if (this.currentSongInfo.start)
+              currentTime -= this.currentSongInfo.start;
+
+            // 調整進度軸長度 time:currentTime/totaltime:duration
+            this.timeLine = (currentTime / this.duration) * 100;
+            this.currentTime = currentTime;
+            this.getPlayerState();
+          }
         });
       }, 1000);
     },
@@ -241,16 +287,16 @@ export default {
       this.playerState = await this.player.getPlayerState();
     },
     loopCurrentSong() {
-      let id = this.videoId;
-      this.player.loadVideoById(id);
-      this.$nextTick(function() {
-        this.autoPlay();
-      });
+      let zero = this.currentSongInfo.start || 0;
+      this.player.seekTo(zero);
     },
     loopSong() {
       if (this.isLoop) {
         this.loopCurrentSong();
       } else {
+        if (this.currentSongInfo.end)
+            this.player.pauseVideo();
+
         let total = this.currentPlayList.length;
         // 隨機撥放
         let suffleIndex = Math.floor(Math.random() * total);
