@@ -13,14 +13,15 @@ export default {
     return {
       currentPopoverIndex: -1,
       currentIndex: 0,
-      musicType: "KPOP",
+      /* FIXME, server side process ? */
+      /*musicType: "preset",
       currentSong: {
-        song: "Chica",
-        videoId: "ccX6lLy2Ydw",
+        song: "水色の雨",
+        videoId: "zGsc-9kDgYk",
         duration: "00:00"
       },
-      currentSinger: "Chung Ha",
-      videoId: "ccX6lLy2Ydw",
+      currentSinger: "Rin",
+      videoId: "zGsc-9kDgYk",*/
       albumIndex: 0,
       isPlay: false,
       timeLine: 0,
@@ -56,10 +57,10 @@ export default {
   },
   created() {
     let vm = this;
-    this.axios.get("./playlist.json").then(response => {
+    this.axios.get("./api/preset").then(response => {
       vm.playList = response.data;
-      this.init();
-      this.player.setVolume(30);
+      vm.init();
+      vm.player.setVolume(100);
     });
   },
   mounted() {
