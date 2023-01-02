@@ -364,6 +364,8 @@ export default {
       this.currentSong = item.song;
       this.videoId = item.videoId;
       this.currentIndex = index;
+      this.currentSongInfo = item;
+
       if (this.musicType === "Daily Mix") {
         this.currentSinger = this.currentPlayList[this.currentIndex].singer;
       }
