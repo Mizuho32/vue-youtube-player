@@ -155,9 +155,8 @@ export default {
       }, 4000);
     },
     init() {
-      this.$once("hook:beforeDestroy", () => {
-        clearInterval(this.processInterval);
-      });
+      this.stopUpdateDuration();
+
       let pl = this.playList;
       this.musicType = this.musicType || Object.keys(pl)[0];
       let item = this.playList[this.musicType][this.albumIndex];
@@ -178,10 +177,11 @@ export default {
     },
     autoPlay() {
       let start = this.currentSongInfo.start
+      let vm = this;
       if (start) {
         setTimeout(()=> {
-          this.player.seekTo(start).then(v=>{
-            this.player
+          vm.player.seekTo(start).then(v=>{
+            vm.player
               .getCurrentTime()
               .then(p => console.log(`change complete seek to ${start} (actual ${p})`));
           });
@@ -216,6 +216,7 @@ export default {
       let total = this.currentPlayList.length;
       if (total <= 1) return;
       this.currentIndex = (this.currentIndex + click + total) % total;
+
       this.init();
 
       // Old video load code
@@ -229,8 +230,9 @@ export default {
         }
       });*/
 
+      let vm = this;
       this.$nextTick(function() {
-        this.autoPlay();
+        vm.autoPlay();
       });
     },
     changeVolume() {
@@ -262,13 +264,23 @@ export default {
       let offset = this.currentSongInfo.start || 0;
       this.player.seekTo(offset + this.newTime);
     },
+    stopUpdateDuration() {
+      let vm = this;
+      //this.$once("hook:beforeDestroy", () => {
+        if (vm.processInterval !== null) {
+          clearInterval(vm.processInterval);
+          vm.processInterval = null;
+        }
+      //});
+    },
     async updateDuration() {
       // 計算歌曲總時間
       this.duration = this.currentSongInfo.end ? this.currentSongInfo.end - this.currentSongInfo.start : await this.player.getDuration();
       this.processInterval = setInterval(() => {
         this.player.getCurrentTime().then(currentTime => {
           if (this.currentSongInfo.end && this.currentSongInfo.end < currentTime) {
-            this.loopSong();
+            if (this.processInterval !== null) // currentTime > end but changed by changeSong() , this.processInterval is null
+              this.loopSong();
           } else {
             if (this.currentSongInfo.start)
               currentTime -= this.currentSongInfo.start;
@@ -282,9 +294,7 @@ export default {
       }, 1000);
     },
     paused() {
-      this.$once("hook:beforeDestroy", () => {
-        clearInterval(this.processInterval);
-      });
+      this.stopUpdateDuration();
     },
     async getPlayerState() {
       // 監控影片狀態=>增加 loading icon
@@ -299,7 +309,7 @@ export default {
     loopSong() {
       if (this.isLoop) {
         this.loopCurrentSong();
-      } else {
+      } else { // called when playing ended
         if (this.currentSongInfo.end)
             this.player.pauseVideo();
 
@@ -312,13 +322,12 @@ export default {
           this.currentIndex++;
         }
         if (this.currentIndex === total) this.currentIndex = 0;
+
         this.init();
         this.$nextTick(function() {
           this.autoPlay();
         });
-        this.$once("hook:beforeDestroy", () => {
-          clearInterval(this.processInterval);
-        });
+        // this.stopUpdateDuration(); // called in init()
       }
     },
     followHandler(item) {
