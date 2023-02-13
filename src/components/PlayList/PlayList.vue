@@ -347,16 +347,13 @@ export default {
         return;
       this.currentIndex = 0;
       this.albumIndex = index;
-      this.reset(item);
+      this.init();
+      //this.reset(item);
       if (this.musicType === "Daily Mix") {
         this.currentSinger = this.currentPlayList[this.currentIndex].singer;
       }
       this.$nextTick(function() {
-        this.player.pauseVideo();
-        setTimeout(() => {
-          this.isPlay = true;
-          this.player.playVideo();
-        }, 1000);
+        this.autoPlay();
       });
     },
     selectSong({ item, index }) {
