@@ -8,7 +8,7 @@
         <div
           class="d-inline-flex mb-4 float-md-left mr-4"
           v-for="(item, index) in playList[type]"
-          :key="item.singer"
+          :key="item.id"
         >
           <div
             class="d-flex flex-column justify-content-center align-items-center"

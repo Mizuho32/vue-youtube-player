@@ -47,18 +47,20 @@
               class="w-100 text-left py-5 d-flex flex-column align-items-between justify-content-center m-auto img-cover img-shadow"
               :style="`background-image: url(${currentBackGround})`">
               <div class="pt-4 m-auto" style="z-index:1">
+                <!--
                 <div v-for="item in sameTypeList">
                   <div class="text-center text-success" v-if="item.singer===currentSinger && musicType!=='Daily Mix'"><small
                       class>{{item.followers}}
                       FOLLOWERS </small>
                   </div>
-                </div>
+                </div>-->
                 <h3 class="display-2 font-weight-bold text-white pt-3 pb-3 text-center" v-if="musicType==='Daily Mix'">
                   Daily Mix
                 </h3>
                 <h3 class="display-2 font-weight-bold text-white pt-3 pb-3 text-center" v-else="musicType!=='Daily Mix'">
                   {{currentSinger}}</h3>
 
+                <!--
                 <div class="d-flex align-items-center justify-content-center pb-3">
                   <button class="btn btn-success mx-2"
                     @click="togglePlay"><small>{{!isPlay?"PLAY":"PAUSED"}}</small></button>
@@ -67,7 +69,7 @@
                       v-if="item.singer===currentSinger && musicType!=='Daily Mix'">
                     </PlayListFollowerBtn>
                   </div>
-                </div>
+                </div>-->
               </div>
             </div>
             <div class="col-md-8 m-auto" >
@@ -77,12 +79,12 @@
                     :class="{'border-bottom border-success':playListStatus==='OVERVIEW'}"
                     @click="playListStatus='OVERVIEW'"><small>OVERVIEW</small></a>
                 </li>
-                <li class="">
+                <!--<li class="">
                   <a class="text-secondary mx-md-4 text-underline"
                     :class="{'border-bottom border-success':playListStatus==='RELATED'}"
                     @click="playListStatus='RELATED'"><small>RELATED
                       ARTIST</small></a>
-                </li>
+                </li>-->
                 <li class="">
                   <a class="text-secondary mx-md-4 text-underline"
                     :class="{'border-bottom border-success':playListStatus==='ABOUT'}"
@@ -110,7 +112,7 @@
                 </div>
               </div>
               <!-- RELATED -->
-              <div class="list-group pt-4" v-if="playListStatus==='RELATED'">
+              <!--<div class="list-group pt-4" v-if="playListStatus==='RELATED'">
                 <div class="row">
                   <div class="col-md-6 col-lg-4 mb-4" v-for="(item,index) in sameTypeList" :key="item.singer">
                     <RelatedItem 
@@ -118,7 +120,7 @@
                     :index="index"
                     :musicType="musicType"
                     @selectSinger="selectSinger"
-                    ></RelatedItem>
+                    ></RelatedItem>-->
                     <!-- <div class="d-flex flex-column
                                        justify-content-center align-items-center">
                       <div class="img-singer-thumb img-cover rounded-circle"
@@ -127,9 +129,9 @@
                       <small class="text-white mt-3" v-if="musicType!=='Daily Mix'">{{item.singer}}</small>
                       <small class="text-white mt-3" v-else>Daily Mix</small>
                     </div> -->
-                  </div>
+                  <!--</div>
                 </div>
-              </div>
+              </div>-->
               <!-- ABOUT -->
               <div class="list-group pt-4" v-if="playListStatus==='ABOUT'">
                 <h5 class="text-white">The F2E - 前端修練精神時光屋 第三關 - MP3 Player</h5>
