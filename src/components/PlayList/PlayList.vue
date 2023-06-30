@@ -200,6 +200,16 @@ export default {
         }, 1000);
       }
     },
+    startPlay() {
+      this.isPlay = true;
+      this.player.playVideo();
+      this.updateDuration();
+    },
+    stopPlay() {
+      this.isPlay = false;
+      this.player.pauseVideo();
+      this.paused();
+    },
     togglePlay() {
       // 切換撥放或停止
       this.isPlay = !this.isPlay;
