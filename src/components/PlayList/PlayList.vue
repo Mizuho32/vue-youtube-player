@@ -267,6 +267,7 @@ export default {
     },
     stopUpdateDuration() {
       let vm = this;
+
       //this.$once("hook:beforeDestroy", () => {
         if (vm.processInterval !== null) {
           clearInterval(vm.processInterval);
@@ -295,6 +296,7 @@ export default {
             this.getPlayerState();
           }
         });
+
       }, 1000);
     },
     paused() {
