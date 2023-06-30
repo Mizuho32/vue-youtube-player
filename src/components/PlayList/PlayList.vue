@@ -138,7 +138,7 @@ export default {
           if (p !== undefined && p.includes(vm.videoId)) {
             console.log(`loaded video ${vm.currentSong} (${p})`, vm.player);
             clearInterval(itv_id);
-            vm.autoPlay();
+            vm.autoPlay(true);
           }
         });
       }, 100);
@@ -176,7 +176,7 @@ export default {
       this.musicType = item.type;
       this.copyright = item.copyright;
     },
-    autoPlay() {
+    autoPlay(seekOnly = false) {
       let start = this.currentSongInfo.start
       let vm = this;
 
@@ -192,6 +192,8 @@ export default {
                 let msg = `change complete seek to ${start} (player.getCurTime: ${p}, this.curTime: ${vm.currentTime})`;
                 console.log(msg);
               });
+
+            if (seekOnly) return;
 
             vm.player.mute();
             vm.startPlay();
