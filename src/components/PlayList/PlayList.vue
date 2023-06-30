@@ -213,15 +213,12 @@ export default {
       this.paused();
     },
     togglePlay() {
-      // 切換撥放或停止
-      this.isPlay = !this.isPlay;
-
       console.log(`toggle, ${this.currentSong}`);
 
-      this.player.playVideo();
-      if (!this.isPlay) {
-        this.player.pauseVideo();
-        this.isPlay = false;
+      if (this.isPlay) {
+        this.stopPlay();
+      } else {
+        this.startPlay();
       }
     },
     changeSong(click) {
