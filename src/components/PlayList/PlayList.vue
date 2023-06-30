@@ -179,25 +179,27 @@ export default {
     autoPlay() {
       let start = this.currentSongInfo.start
       let vm = this;
+
       if (start) {
         setTimeout(()=> {
           vm.player.seekTo(start).then(v=>{
+
+          // 自動撥放
+          setTimeout(() => {
             vm.player
               .getCurrentTime()
-              .then(p => console.log(`change complete seek to ${start} (actual ${p})`));
-          });
-        }, 200)
-      }
+              .then(p => {
+                let msg = `change complete seek to ${start} (player.getCurTime: ${p}, this.curTime: ${vm.currentTime})`;
+                console.log(msg);
+              });
 
-      // 自動撥放
-      if (!this.isPlay) {
-        this.player.playVideo();
-      } else {
-        this.player.pauseVideo();
-        setTimeout(() => {
-          this.isPlay = true;
-          this.player.playVideo();
-        }, 1000);
+            vm.player.mute();
+            vm.startPlay();
+            vm.player.unMute();
+          }, 1000); // start play after ? sec after seek
+
+          });
+        }, 200) // seek after ? sec
       }
     },
     startPlay() {
