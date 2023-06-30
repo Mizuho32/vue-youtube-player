@@ -275,11 +275,14 @@ export default {
       //});
     },
     async updateDuration() {
+      if (this.processInterval !== null) return;
+
       // 計算歌曲總時間
       this.duration = this.currentSongInfo.end ? this.currentSongInfo.end - this.currentSongInfo.start : await this.player.getDuration();
       this.processInterval = setInterval(() => {
+
         this.player.getCurrentTime().then(currentTime => {
-          if (this.currentSongInfo.end && this.currentSongInfo.end < currentTime) {
+          if (this.currentSongInfo.end && this.currentSongInfo.end < currentTime) { // song ended
             if (this.processInterval !== null) // currentTime > end but changed by changeSong() , this.processInterval is null
               this.loopSong();
           } else {
