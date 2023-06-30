@@ -156,6 +156,7 @@ export default {
     },
     init() {
       this.stopUpdateDuration();
+      this.stopPlay();
 
       let pl = this.playList;
       this.musicType = this.musicType || Object.keys(pl)[0];
