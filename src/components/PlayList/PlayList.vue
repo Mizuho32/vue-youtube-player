@@ -180,33 +180,64 @@ export default {
       this.musicType = item.type;
       this.copyright = item.copyright;
     },
-    autoPlay(seekOnly = false) {
+    waitUntil(cond, timeout = 10, delta = 100) { // sec, millisec
+      let tsum = 0;
+      return new Promise(resolve => {
+        const interval = setInterval(() => {
+          tsum += delta;
+
+          if (cond()) { // OK
+            clearInterval(interval);
+            resolve(true); // return
+          } else if ( tsum > timeout*1000 ) { // timeout
+            resolve(false);
+          }
+        }, delta);
+      });
+    },
+    async autoPlay(seekOnly = false) {
       let start = this.currentSongInfo.start
       let vm = this;
 
-      if (start) {
-        setTimeout(()=> {
-          vm.player.seekTo(start).then(v=>{
+      if (!start) return;
 
-          // 自動撥放
-          setTimeout(() => {
-            vm.player
-              .getCurrentTime()
-              .then(p => {
-                let msg = `change complete seek to ${start} (player.getCurTime: ${p}, this.curTime: ${vm.currentTime})`;
-                console.log(msg);
-              });
+      // Wait load
+      // await new Promise(resolve => setTimeout(resolve, 5000));
+      // let wait_loaded = await this.waitUntil(()=>this.isLoaded, 5);
+      // if (!wait_loaded) {
+      //   alert("failed to load video");
+      //   return
+      // }
 
-            if (seekOnly) return;
+      // Seek
+      let check_seek = async ()=>{
+        await vm.player.seekTo(start); // return player
+        let current_time = await vm.player.getCurrentTime();
 
-            vm.player.mute();
-            vm.startPlay();
-            vm.player.unMute();
-          }, 1000); // start play after ? sec after seek
+        let msg = `seek to ${start} (player.getCurTime: ${current_time}, this.curTime: ${vm.currentTime})`;
+        console.log(msg);
 
-          });
-        }, 200) // seek after ? sec
+        if (current_time == start) return true;
+        return false;
+      };
+      let sought = await this.waitUntil(check_seek, 5, 500);
+
+      if (!sought) {
+        alert("failed to seek video");
+        return
       }
+      console.log(`After seek ${sought}`);
+
+      // handle autoplay case
+      // actually is playing while !isAutoPlay, set isPlay = true
+      let playerState = await this.player.getPlayerState();
+      //console.log(`actually is playing ${playerState}`);
+      if (playerState == 1 || playerState == 3 || playerState == 5) this.isPlay = true;
+
+
+      if (seekOnly) return;
+
+      vm.startPlay();
     },
     async startPlay() {
       this.player.playVideo();
