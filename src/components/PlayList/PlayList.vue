@@ -172,7 +172,7 @@ export default {
       this.isLoaded = false;
       console.log(`reset to ${this.currentSong} ${this.videoId}`);
     },
-    reset(item) {
+    reset(item) { // do reset and change video
       this.currentSong = item.songs[this.currentIndex].song;
       this.currentSongInfo = item.songs[this.currentIndex];
       this.videoId = item.songs[this.currentIndex].videoId;
@@ -258,8 +258,9 @@ export default {
       this.player.pauseVideo();
       this.paused();
     },
-    togglePlay() {
-      console.log(`toggle, ${this.currentSong}`);
+    async togglePlay() {
+      let current_time = await this.player.getCurrentTime();
+      console.log(`toggle, ${this.currentSong}, ${current_time}`);
 
       if (this.isPlay) {
         this.stopPlay();
