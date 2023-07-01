@@ -24,6 +24,7 @@ export default {
       isLoop: false,
       isShuffle: false,
       isBuffering: false,
+      isLoaded: false,
       progress: 0,
       newTime: 0,
       processInterval: null,
@@ -131,8 +132,19 @@ export default {
             clearInterval(itv_id);
             vm.autoPlay(true);
           }
+
+          console.log(vm.player);
+          vm.player.addEventListener('onStateChange', this.onPlayerStateChange);
         });
       }, 100);
+    },
+    onPlayerStateChange(event) {
+      //console.log(`state change ${event.data}, loaded ${this.isLoaded}`);
+      if (!this.isLoaded) {
+        if (event.data == 5) { // video cued
+          this.isLoaded = true;
+        }
+      }
     },
     checkPopovers($event) {
       if ($event.target.nodeName !== "I") {
@@ -154,6 +166,7 @@ export default {
       let item = this.playList[this.musicType][this.albumIndex];
 
       this.reset(item);
+      this.isLoaded = false;
       console.log(`reset to ${this.currentSong} ${this.videoId}`);
     },
     reset(item) {
