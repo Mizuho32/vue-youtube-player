@@ -208,10 +208,16 @@ export default {
         }, 200) // seek after ? sec
       }
     },
-    startPlay() {
-      this.isPlay = true;
+    async startPlay() {
       this.player.playVideo();
-      this.updateDuration();
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      let playerState = await this.player.getPlayerState();
+      //console.log(`set isPlay when ${playerState}`);
+      if (playerState == 1 || playerState == 3 || playerState == 5) { // playing or buffering or cued
+        this.isPlay = true;
+        this.updateDuration();
+      }
     },
     stopPlay() {
       this.isPlay = false;
