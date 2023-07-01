@@ -130,7 +130,10 @@ export default {
           if (p !== undefined && p.includes(vm.videoId)) {
             console.log(`loaded video ${vm.currentSong} (${p})`, vm.player);
             clearInterval(itv_id);
-            vm.autoPlay(true);
+
+            let seekOnly = true
+            // A => B <=> !A or B
+            vm.autoPlay(!this.isAutoPlay || !seekOnly); // AutoPlay => not seek only
           }
 
           console.log(vm.player);
