@@ -13,15 +13,6 @@ export default {
     return {
       currentPopoverIndex: -1,
       currentIndex: 0,
-      /* FIXME, server side process ? */
-      /*musicType: "preset",
-      currentSong: {
-        song: "水色の雨",
-        videoId: "zGsc-9kDgYk",
-        duration: "00:00"
-      },
-      currentSinger: "Rin",
-      videoId: "zGsc-9kDgYk",*/
       albumIndex: 0,
       isPlay: false,
       timeLine: 0,
@@ -230,17 +221,6 @@ export default {
       this.currentIndex = (this.currentIndex + click + total) % total;
 
       this.init();
-
-      // Old video load code
-      //this.player.nextVideo();
-      //setTimeout(()=>this.player.seekTo(this.currentSongStart), 200)
-      /*this.player.loadVideoById(new String(this.videoId)).then(()=>{
-        let start = this.currentSongInfo.start
-        if (start) {
-          console.log(`change complete seek to ${start}`);
-          setTimeout(()=>this.player.seekTo(start), 200)
-        }
-      });*/
 
       let vm = this;
       this.$nextTick(function() {
