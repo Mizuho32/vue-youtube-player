@@ -20,7 +20,7 @@ export default {
       currentTime: 0,
       isDrag: false,
       isGrab: false,
-      isAutoPlay: true,
+      isAutoPlay: false,
       isLoop: false,
       isShuffle: false,
       isBuffering: false,
