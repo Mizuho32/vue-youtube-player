@@ -169,7 +169,6 @@ export default {
       let item = this.playList[this.musicType][this.albumIndex];
 
       this.reset(item);
-      this.isLoaded = false;
       console.log(`reset to ${this.currentSong} ${this.videoId}`);
     },
     reset(item) { // do reset and change video
@@ -182,6 +181,10 @@ export default {
       this.currentSinger = item.singer;
       this.musicType = item.type;
       this.copyright = item.copyright;
+    },
+    changeVideo(id) {
+      this.videoId = id;
+      this.isLoaded = false;
     },
     waitUntil(cond, timeout = 10, delta = 100) { // sec, millisec
       let tsum = 0;
