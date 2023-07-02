@@ -193,14 +193,13 @@ export default {
     waitUntil(cond, timeout = 10, delta = 100) { // sec, millisec
       let tsum = 0;
       return new Promise(resolve => {
-        const interval = setInterval(() => {
+        const interval = setInterval(async () => {
           tsum += delta;
 
-          if (cond()) { // OK
+          let condition = await cond();
+          if (await cond() || tsum > timeout*1000) { // OK or timeout
             clearInterval(interval);
-            resolve(true); // return
-          } else if ( tsum > timeout*1000 ) { // timeout
-            resolve(false);
+            resolve(condition); // return
           }
         }, delta);
       });
@@ -236,7 +235,6 @@ export default {
         alert("failed to seek video");
         return
       }
-      console.log(`After seek ${sought}`);
 
       // handle autoplay case
       // actually is playing while !isAutoPlay, set isPlay = true
