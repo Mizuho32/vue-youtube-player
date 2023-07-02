@@ -144,7 +144,7 @@ export default {
     onPlayerStateChange(event) {
       //console.log(`state change ${event.data}, loaded ${this.isLoaded}`);
       if (!this.isLoaded) {
-        if (event.data == 5) { // video cued
+        if (event.data == 1 || event.data == 3 || event.data == 5) { // video cued
           this.isLoaded = true;
         }
       }
@@ -206,11 +206,11 @@ export default {
 
       // Wait load
       // await new Promise(resolve => setTimeout(resolve, 5000));
-      // let wait_loaded = await this.waitUntil(()=>this.isLoaded, 5);
-      // if (!wait_loaded) {
-      //   alert("failed to load video");
-      //   return
-      // }
+      let wait_loaded = await this.waitUntil(()=>this.isLoaded, 10);
+      if (!wait_loaded) {
+        alert("failed to load video");
+        return
+      }
 
       // Seek
       let check_seek = async ()=>{
