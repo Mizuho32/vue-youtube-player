@@ -174,7 +174,7 @@ export default {
     reset(item) { // do reset and change video
       this.currentSong = item.songs[this.currentIndex].song;
       this.currentSongInfo = item.songs[this.currentIndex];
-      this.videoId = item.songs[this.currentIndex].videoId;
+      this.changeVideo(item.songs[this.currentIndex].videoId);
       this.currentPlayList = item.songs || [];
       this.currentAlbumImg = item.img;
       this.currentBackGround = this.publicPath + item.backgroundImg;
@@ -277,7 +277,10 @@ export default {
       if (total <= 1) return;
       this.currentIndex = (this.currentIndex + click + total) % total;
 
-      this.init();
+      let item = this.playList[this.musicType][this.albumIndex];
+      this.changeVideo(item.songs[this.currentIndex].videoId);
+      this.currentSong = item.songs[this.currentIndex].song;
+      this.currentSongInfo = item.songs[this.currentIndex];
 
       let vm = this;
       this.$nextTick(function() {
@@ -402,19 +405,23 @@ export default {
       this.currentIndex = 0;
       this.albumIndex = index;
       this.init();
-      //this.reset(item);
+
       if (this.musicType === "Daily Mix") {
         this.currentSinger = this.currentPlayList[this.currentIndex].singer;
       }
+
       this.$nextTick(function() {
         this.autoPlay();
       });
     },
     selectSong({ item, index }) {
+      this.stopUpdateDuration();
+      this.stopPlay();
+
       // 點選歌曲
-      this.currentSong = item.song;
-      this.videoId = item.videoId;
       this.currentIndex = index;
+      this.changeVideo(item.videoId);
+      this.currentSong = item.song;
       this.currentSongInfo = item;
 
       if (this.musicType === "Daily Mix") {
