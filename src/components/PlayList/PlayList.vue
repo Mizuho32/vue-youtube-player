@@ -85,6 +85,10 @@ export default {
       } else {
         this.isBuffering = true;
       }
+      if (this.playerState == 1)
+        this.isPlay = true;
+      if (this.playerState == 2)
+        this.isPlay = false;
     },
     navbar() {
       if (this.navbar === "Daily Mix") {
