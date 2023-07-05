@@ -3,10 +3,6 @@
     <div class="row">
     </div>
   </div>
-  <div class="h-0">
-    <youtube :video-id="videoId" loop="isLoop" autoplay="isAutoPlay" ref="youtube" class="youtube" @ended="loopSong"
-      @playing="updateDuration" @paused="paused"  @ready="ready" />
-  </div>
   <div class="container-fluid">
     <div class="row">
       <!-- 導覽 -->
@@ -143,83 +139,5 @@
       </div>
     </div>
   </div>
-  <footer class="fixed-bottom">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-12 bg-dark py-3 border-top border-dark">
-          <div class="row">
-            <div class="col-md-10">
-              <div class="row">
-                <div class="col-md-4 d-flex align-items-center justify-content-left">
-                  <div class="img-thumb img-cover mr-2" :style="`background-image: url(${publicPath}${currentAlbumImg})`"></div>
-                  <div class="d-flex flex-column text-left">
-                    <div class="text-white d-flex align-items-center mb-1">
-                      <h5 class="h5 mb-0">{{currentSong}}</h5>
-                    </div>
-                    <small class="text-secondary" v-if="musicType!=='Daily Mix'">{{currentSinger}}</small>
-                    <small class="text-secondary"
-                      v-if="musicType==='Daily Mix'">{{currentPlayList[currentIndex].singer}}</small>
-                  </div>
-                </div>
-                <!-- PlayListController -->
-                <div class="col-md-8 my-auto">
-                  <div class="d-flex align-items-center justify-content-center">
-                    <!-- 隨機撥放 -->
-                    <i class="material-icons mx-md-4 text-secondary" @click="isShuffle = !isShuffle"
-                      :class="{'text-success':isShuffle}">shuffle</i>
-                    <!-- 上一首 -->
-                    <i class="material-icons mx-md-4 text-secondary icon-font-large"
-                      @click="changeSong(-1)">keyboard_arrow_left</i>
-                    <!-- 撥放||暫停 -->
-                    <div class="mx-md-4 text-secondary" @click="togglePlay">
-                      <i class="material-icons" style="transform: translateY(4px);font-size:2rem"
-                        v-if="!isPlay">play_arrow</i>
-                      <i class="material-icons" style="transform: translateY(4px);font-size:2rem" v-else>pause</i>
-                    </div>
-                    <!-- 下一首 -->
-                    <i class="material-icons mx-md-4 text-secondary icon-font-large"
-                      @click="changeSong(1)">keyboard_arrow_right</i>
-                    <!-- 重複撥放 -->
-                    <div class="mx-md-4 text-secondary" @click="isLoop=!isLoop">
-                      <i class="material-icons text-secondary" style="transform: translateY(4px)"
-                        v-if="!isLoop">repeat</i>
-                      <i class="material-icons text-secondary" style="transform: translateY(4px)"
-                        :class="{'text-success':isLoop}" v-else>repeat_one</i>
-                    </div>
-                    <!-- <i class="material-icons mx-md-4 text-secondary">repeat</i> -->
-                  </div>
-                  <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-secondary mr-2">{{currentTime===undefined ? 0 : currentTime|formatTime}}</small>
-                    <div class="progress">
-                      <div class="progress__bar" ref="progressBar" @click="processBarTime">
-                        <div class="progress__bar__pointer" :style="{'left':timeLine - 1 +'%'}"></div>
-                        <div class="progress__bar--fill" :style="{'width':timeLine+'%'}"></div>
-                      </div>
-                    </div>
-                    <small class="text-secondary ml-2">{{duration | formatTime}}</small>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-2 my-auto">
-              <div class="d-flex justify-content-end align-items-center">
-                <div @click="changeUnMute">
-                  <i class="material-icons text-secondary icon-font-large mr-2 pb-2"
-                    v-if="!isUnMute&&volume!==0">volume_down</i>
-                  <i class="material-icons text-secondary icon-font-large mr-2 pb-2"
-                    v-else="isUnMute&&volume==0">volume_off</i>
-                </div>
-                <!-- 調整音量 -->
-                <div class="volume w-50">
-                  <input class="input my-auto" type="range" name="volume" min="0" max="100" :value="volume"
-                    @change="changeVolume" @mousemove="changeVolume" @click="changeVolume" ref="volume"
-                    :style="{'background':`linear-gradient(90deg, #26de85 ${volume}%, #6c757d ${volume}%`}" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <Player ref="player"></Player>
 </div>
