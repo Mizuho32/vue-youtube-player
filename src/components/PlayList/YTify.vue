@@ -10,7 +10,7 @@ import RelatedItem from "./RelatedItem";
 
 Vue.use(VueAxios, axios);
 export default {
-  name: "PlayList",
+  name: "YTify",
   data() {
     return {
       albumIndex: 0,

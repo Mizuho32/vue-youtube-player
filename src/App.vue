@@ -1,10 +1,11 @@
 <template>
   <div id="app">
-    <PlayList></PlayList>
+    <YTify></YTify>
   </div>
 </template>
+
 <script>
-import PlayList from "@/components/PlayList/PlayList";
+import YTify from "@/components/PlayList/YTify";
 export default {
   name: "app",
   data() {
@@ -21,7 +22,7 @@ export default {
     }
   },
   components: {
-    PlayList
+    YTify
   }
 };
 </script>
