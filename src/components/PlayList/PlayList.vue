@@ -226,7 +226,7 @@ export default {
         let msg = `seek to ${start} (player.getCurTime: ${current_time}, this.curTime: ${vm.currentTime})`;
         console.log(msg);
 
-        if (current_time == start) return true;
+        if (Math.abs(current_time - start) <= 1.0) return true;
         return false;
       };
       let sought = await this.waitUntil(check_seek, 5, 500);
