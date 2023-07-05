@@ -5,7 +5,7 @@ import VueAxios from "vue-axios";
 import AlbumList from "./AlbumList";
 import Player from "./Player";
 import PlayListFollowerBtn from "./PlayListFollowerBtn";
-import PlayListItem from "./PlayListItem";
+import PlayList from "./PlayList";
 import RelatedItem from "./RelatedItem";
 
 Vue.use(VueAxios, axios);
@@ -32,7 +32,7 @@ export default {
     PlayListFollowerBtn,
     AlbumList,
     Player,
-    PlayListItem,
+    PlayList,
     RelatedItem
   },
   created() {
@@ -57,6 +57,9 @@ export default {
   computed: {
     player() {
       return this.$refs.player;
+    },
+    playlist() {
+      return this.$refs.playlist;
     },
     isBuffering() {
       return this.player.isBuffering;
@@ -83,12 +86,6 @@ export default {
         this.currentPopoverIndex = -1;
       }
     },
-    showPopovers(index) {
-      this.currentPopoverIndex = index;
-      setTimeout(() => {
-        this.currentPopoverIndex = -1;
-      }, 4000);
-    },
     init(musicType = undefined) {
       console.log(`init to ${musicType}`);
       this.player.stopUpdateDuration();
@@ -111,6 +108,8 @@ export default {
       this.copyright = item.copyright;
 
       this.player.reset(item);
+
+      this.playlist.reset(this.currentPlayList, this.player);
     },
     followHandler(item) {
       item.isFollow = !item.isFollow;
@@ -139,23 +138,6 @@ export default {
         this.player.autoPlay();
       });
     },
-    selectSong({ item, index }) {
-      this.player.stopUpdateDuration();
-      this.player.pausePlay();
-
-      // 點選歌曲
-      this.player.currentIndex = index;
-      this.player.changeVideo(item.videoId);
-      this.player.currentSong = item.song;
-      this.player.currentSongInfo = item;
-
-      if (this.musicType === "Daily Mix") {
-        this.currentSinger = this.currentPlayList[this.currentIndex].singer;
-      }
-      this.$nextTick(function() {
-        this.player.autoPlay();
-      });
-    }
   }
 };
 </script>
