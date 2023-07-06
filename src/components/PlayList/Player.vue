@@ -11,7 +11,7 @@ Vue.use(VueAxios, axios);
 
 export default {
   name: "Player",
-  props: ["typeList", "playlist_datas", "playlist2attach"],
+  props: ["playList", "playlist_datas", "playlist2attach"],
   data() {
     return {
       //currentAlbum: undefined,
@@ -21,7 +21,7 @@ export default {
       //currentSongInfo: undefined,
       //currentSinger: undefined,
       //musicType: undefined,
-      playList: {},
+      //playList: {},
 
       currentTime: 0,
       duration: 0,
@@ -150,7 +150,7 @@ export default {
   },
   methods: {
     init(playList) {
-      this.playList = playList;
+      //this.playList = playList;
       this.changeVideo(this.currentSongInfo.videoId);
 
       //this.currentAlbum = item;

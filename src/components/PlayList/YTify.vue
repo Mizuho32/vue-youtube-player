@@ -24,7 +24,7 @@ export default {
 
       musicType: undefined,
       navbar: "Playlist",
-      playList: [],
+      playList: {},
       playListStatus: "OVERVIEW",
       publicPath: "./",
 
@@ -46,7 +46,9 @@ export default {
   created() {
     let vm = this;
     this.axios.get("./api/preset").then(response => {
-      vm.playList = response.data;
+      for (let [k,v] of Object.entries(response.data)) {
+        vm.$set(this.playList, k, v);
+      }
       vm.init();
       vm.player.ytplayer.setVolume(100);
     });
