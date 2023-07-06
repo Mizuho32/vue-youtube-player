@@ -3,6 +3,7 @@ import Vue from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import AlbumList from "./AlbumList";
+import Search from "./Search";
 import Player from "./Player";
 import PlayListFollowerBtn from "./PlayListFollowerBtn";
 import PlayList from "./PlayList";
@@ -26,11 +27,18 @@ export default {
       playList: [],
       playListStatus: "OVERVIEW",
       publicPath: "./",
+
+      playlist_datas: {
+        main:   {musicType: undefined, albumIndex: 0, currentIndex: 0},
+        search: {musicType: "search_result", albumIndex: 0, currentIndex: 0}
+      },
+      playlist2attach: "main",
     };
   },
   components: {
     PlayListFollowerBtn,
     AlbumList,
+    Search,
     Player,
     PlayList,
     RelatedItem
@@ -95,6 +103,12 @@ export default {
       this.musicType = musicType || this.musicType || Object.keys(pl)[0];
       let item = this.playList[this.musicType][this.albumIndex];
 
+      this.playlist_datas["main"]["musicType"]  = this.musicType;
+      this.playlist_datas["main"]["albumIndex"] = this.albumIndex;
+      this.playlist_datas["main"].currentIndex   = 0;
+
+
+      console.log(`YT ${item}`);
       this.reset(item);
       console.log(`reset to ${this.currentSong} ${this.videoId}`);
     },
@@ -107,9 +121,8 @@ export default {
       this.musicType = item.type;
       this.copyright = item.copyright;
 
-      this.player.reset(item);
-
-      this.playlist.reset(this.currentPlayList, this.player);
+      //this.playlist.reset(item, this.player);
+      this.player.init(this.playList);
     },
     followHandler(item) {
       item.isFollow = !item.isFollow;
@@ -121,12 +134,9 @@ export default {
       }
     },
     selectSinger({ item, index }) {
-      if (
-        item.id === this.playList[this.musicType][this.albumIndex].id &&
-        this.isPlay
-      )
-        return;
-      this.player.currentIndex = 0;
+      if ( item.id === this.playList[this.musicType][this.albumIndex].id && this.isPlay ) return;
+
+      console.log("selectSinger");
       this.albumIndex = index;
       this.init();
 

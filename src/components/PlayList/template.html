@@ -88,7 +88,7 @@
               <!-- OVERVIEW -->
               <div v-if="playListStatus==='OVERVIEW'">
                 <!-- PlayList -->
-                <PlayList ref="playlist" :Album="currentPlayList"></PlayList>
+                <PlayList ref="playlist" :playList="playList" :playlist_datas="playlist_datas" :player="this.$refs.player" :name="'main'"></PlayList>
                 <div class="text-secondary text-left px-3 pt-3 pb-5 d-flex flex-column">
                   <small>若音樂無法正常收聽，請至 Youtube 撥放。</small>
                   <small>{{copyright}}</small>
@@ -126,5 +126,5 @@
       </div>
     </div>
   </div>
-  <Player ref="player"></Player>
+  <Player ref="player" :playList="playList" :playlist_datas="playlist_datas" :playlist2attach="playlist2attach"></Player>
 </div>

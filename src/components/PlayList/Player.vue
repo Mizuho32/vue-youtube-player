@@ -11,15 +11,18 @@ Vue.use(VueAxios, axios);
 
 export default {
   name: "Player",
-  props: ["typeList"],
+  props: ["typeList", "playlist_datas", "playlist2attach"],
   data() {
     return {
-      currentAlbum: undefined,
-      currentAlbumImg: "",
-      currentIndex: 0,
-      currentSong: undefined,
-      currentSongInfo: undefined,
-      currentSinger: undefined,
+      //currentAlbum: undefined,
+      //currentAlbumImg: "",
+      //currentIndex: 0,
+      //currentSong: undefined,
+      //currentSongInfo: undefined,
+      //currentSinger: undefined,
+      //musicType: undefined,
+      playList: {},
+
       currentTime: 0,
       duration: 0,
       isPlay: false,
@@ -31,9 +34,9 @@ export default {
       isBuffering: false,
       isLoaded: false,
       isUnMute: false,
-      musicType: undefined,
       newTime: 0,
       playerState: -1,
+      playlist: undefined,
       progress: 0,
       processInterval: null,
       publicPath: "./",
@@ -83,6 +86,55 @@ export default {
     }
   },
   computed: {
+    currentPlayListData() {
+      return this.playlist_datas[this.playlist2attach];
+    },
+    currentAlbum() {
+      let data = this.playlist_datas[this.playlist2attach];
+
+      if (this.playList[data["musicType"]])
+        return this.playList[data["musicType"]][data["albumIndex"]];
+      return {};
+    },
+    currentAlbumImg() {
+      let data = this.playlist_datas[this.playlist2attach];
+
+      if (this.playList[data["musicType"]])
+        return this.playList[data["musicType"]][data["albumIndex"]].img;
+      return "";
+    },
+    currentIndex() {
+      let data = this.playlist_datas[this.playlist2attach];
+      return data["currentIndex"];
+    },
+    currentSong() {
+      let data = this.playlist_datas[this.playlist2attach];
+
+      if (this.playList[data["musicType"]])
+        return this.playList[data["musicType"]][data["albumIndex"]].songs[data["currentIndex"]].song;
+      return "";
+    },
+    currentSongInfo() {
+      let data = this.playlist_datas[this.playlist2attach];
+
+      if (this.playList[data["musicType"]])
+        return this.playList[data["musicType"]][data["albumIndex"]].songs[data["currentIndex"]];
+      return {};
+    },
+    currentSinger() {
+      let data = this.playlist_datas[this.playlist2attach];
+
+      if (this.playList[data["musicType"]])
+        return this.playList[data["musicType"]][data["albumIndex"]].singer;
+      return "";
+    },
+    musicType() {
+      let data = this.playlist_datas[this.playlist2attach];
+
+      if (this.playList[data["musicType"]])
+        return this.playList[data["musicType"]][data["albumIndex"]].type;
+      return "";
+    },
     ytplayer() {
       return this.$refs.youtube.player;
     },
@@ -97,17 +149,17 @@ export default {
     }
   },
   methods: {
-    reset(item) { // item: album. do reset and change video
-      if (!item) return;
+    init(playList) {
+      this.playList = playList;
+      this.changeVideo(this.currentSongInfo.videoId);
 
-      this.currentAlbum = item;
-      this.currentSong = item.songs[this.currentIndex].song;
-      this.currentSongInfo = item.songs[this.currentIndex];
-      this.changeVideo(item.songs[this.currentIndex].videoId);
-      this.currentPlayList = item.songs || [];
-      this.currentAlbumImg = item.img;
-      this.currentSinger = item.singer;
-      this.musicType = item.type;
+      //this.currentAlbum = item;
+      //this.currentSong = item.songs[this.currentIndex].song;
+      //this.currentSongInfo = item.songs[this.currentIndex];
+      //this.currentPlayList = item.songs || [];
+      //this.currentAlbumImg = item.img;
+      //this.currentSinger = item.singer;
+      //this.musicType = item.type;
     },
     ready() {
       // seek to the time (autoPlay) after video load finished
@@ -136,20 +188,24 @@ export default {
         }
       }
     },
+    changeIndexAndVideo(index) {
+      this.currentPlayListData.currentIndex = index;
+      this.changeVideo(this.currentSongInfo.videoId);
+    },
     changeVideo(id) {
       this.videoId = id;
       this.isLoaded = false;
     },
     changeSong(click) {
-      // 上一首或下一首
-      let total = this.currentPlayList.length;
-      if (total <= 1) return;
-      this.currentIndex = (this.currentIndex + click + total) % total;
+      let album = this.currentAlbum;
 
-      let item = this.currentAlbum;
-      this.changeVideo(item.songs[this.currentIndex].videoId);
-      this.currentSong = item.songs[this.currentIndex].song;
-      this.currentSongInfo = item.songs[this.currentIndex];
+      // 上一首或下一首
+      let total = album.songs.length;
+      if (total <= 1) return;
+
+      let cindex = this.currentPlayListData.currentIndex
+      //this.currentPlayListData.currentIndex = (cindex + click + total) % total;
+      this.changeIndexAndVideo((cindex + click + total) % total);
 
       let vm = this;
       this.$nextTick(function() {
@@ -175,7 +231,7 @@ export default {
 
         this.ytplayer.getCurrentTime().then(currentTime => {
           if (this.currentSongInfo.end && this.currentSongInfo.end < currentTime) { // song ended
-            if (this.processInterval !== null) // currentTime > end but changed by changeSong() , this.processInterval is null
+            if (this.processInterval !== null) // currentTime > end but changed by changeSong() => this.processInterval is null
               this.loopSong();
           } else {
             if (this.currentSongInfo.start)
@@ -207,20 +263,27 @@ export default {
       if (this.isLoop) {
         this.loopCurrentSong();
       } else { // called when playing ended
+        console.log(`loopSong ${this.currentIndex}`);
+
         if (this.currentSongInfo.end)
             this.ytplayer.pauseVideo();
 
-        let total = this.currentPlayList.length;
+        let album = this.currentAlbum;
+        let total = album.songs.length;
+
         // 隨機撥放
         let suffleIndex = Math.floor(Math.random() * total);
+        let nextIndex = this.currentIndex;
         if (this.isShuffle && this.currentIndex !== suffleIndex) {
-          this.currentIndex = suffleIndex;
+          nextIndex = suffleIndex;
         } else {
-          this.currentIndex++;
+          nextIndex++;
         }
-        if (this.currentIndex === total) this.currentIndex = 0;
+        if (nextIndex === total) currentIndex = 0;
+        console.log(`loopSong, nextidx ${nextIndex}`);
 
-        this.reset(this.currentAlbum);
+        //this.reset(this.currentAlbum);
+        this.changeIndexAndVideo(nextIndex);
         this.$nextTick(function() {
           this.autoPlay();
         });
@@ -246,7 +309,7 @@ export default {
         await vm.ytplayer.seekTo(start); // return player
         let current_time = await vm.ytplayer.getCurrentTime();
 
-        let msg = `seek to ${start} (player.getCurTime: ${current_time}, this.curTime: ${vm.currentTime})`;
+        let msg = `seek to ${this.videoId} ${start} (player.getCurTime: ${current_time}, this.curTime: ${vm.currentTime})`;
         console.log(msg);
 
         if (Math.abs(current_time - start) <= 1.0) return true;

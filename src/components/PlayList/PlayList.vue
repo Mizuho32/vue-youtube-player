@@ -19,20 +19,36 @@ import PlayListItem from "./PlayListItem";
 
 export default {
   name: "PlayList",
-  props: ["Album"],
+  props: ["playList", "playlist_datas", "player", "name"],
   data() {
     return {
-      //Album: undefined, // same as PlayList, songs
       currentPopoverIndex: -1,
-      player: undefined,
+      //player: undefined,
+
+      /*
+      Album: undefined,
+      AlbumImg: "",
+      Index: 0,
+      Song: undefined,
+      SongInfo: undefined,
+      Singer: undefined,*/
     };
   },
   components: {
     PlayListItem,
   },
+  created: function () {
+  },
+  mounted: function () {
+    console.log('mounted');
+    //console.log(this.player);
+  },
   computed: {
     currentPlayList() {
-      if (this.Album) return this.Album;
+      let data = this.playlist_datas[this.name];
+
+      if (this.playList[data["musicType"]])
+        return this.playList[data["musicType"]][data["albumIndex"]].songs;
       return [];
     },
     isBuffering() {
@@ -40,15 +56,31 @@ export default {
       return false;
     },
     currentIndex() {
-      if (this.player) return this.player.currentIndex;
-      return 0;
+      let data = this.playlist_datas[this.name];
+      return data.currentIndex;
     }
   },
   methods: {
-    reset(album, player) {
-      //this.Album = album;
-      this.player = player;
-    },
+    /*reset(album, player) {
+      //this.player = player;
+
+      let data = this.playlist_datas[this.name];
+      this.musicType = data["musicType"];
+      this.Album = this.playList[this.musicType][data["albumIndex"]];
+      //this.Album = album || this.Album;
+      console.log(`PL reset ${this.Album} ${player}`);
+      console.log(this.playList, this.playlist_datas);
+
+      let item = this.Album;
+      this.currentSong = item.songs[this.currentIndex].song;
+      this.currentSongInfo = item.songs[this.currentIndex];
+      //this.currentPlayList = item.songs || [];
+      this.currentAlbumImg = item.img;
+      this.currentSinger = item.singer;
+      //this.musicType = item.type;
+
+      //this.changeVideo(item.songs[this.currentIndex].videoId);
+    },*/
     showPopovers(index) {
       this.currentPopoverIndex = index;
       setTimeout(() => {
@@ -56,16 +88,18 @@ export default {
       }, 4000);
     },
     selectSong({ item, index }) {
+      console.log(`selectSong ${this.player}`);
       if (! this.player ) return;
 
       this.player.stopUpdateDuration();
       this.player.pausePlay();
 
       // 點選歌曲
-      this.player.currentIndex = index;
-      this.player.changeVideo(item.videoId);
-      this.player.currentSong = item.song;
-      this.player.currentSongInfo = item;
+      //this.player.currentIndex = index;
+      //this.player.changeVideo(item.videoId);
+      //this.player.currentSong = item.song;
+      //this.player.currentSongInfo = item;
+      this.player.changeIndexAndVideo(index);
 
       if (this.musicType === "Daily Mix") {
         this.currentSinger = this.currentPlayList[this.currentIndex].singer;
