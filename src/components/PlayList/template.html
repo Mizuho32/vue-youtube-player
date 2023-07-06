@@ -17,6 +17,10 @@
               <a class="text-secondary" @click="navbar='Playlist',playListStatus='OVERVIEW'"
                 :class="{'text-success':navbar==='Playlist'}">Playlist</a>
             </li>
+            <li class="text-left mb-2">
+              <a class="text-secondary" @click="navbar='Search'"
+                :class="{'text-success':navbar==='Search'}">Search</a>
+            </li>
           </ul>
           <ul class="list-group">
             <hr class="border-secondary w-100" style="opacity:0.2">
@@ -123,6 +127,8 @@
             </div>
           </div>
         </template>
+        <Search :playList="playList" :playlist_datas="playlist_datas" :player="this.$refs.player" @selectSinger="selectSinger" @init="init" v-if="navbar==='Search'">
+        </Search>
       </div>
     </div>
   </div>
