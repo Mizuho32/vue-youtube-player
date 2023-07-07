@@ -417,8 +417,7 @@ export default {
                     <small class="text-secondary" >#{{currentIndex+1}}</small>
                     <h5 class="h5 mb-0">{{currentSong}}</h5>
                     <p> by </p>
-                    <small class="text-secondary" v-if="musicType!=='Daily Mix'">{{currentSinger}}</small>
-                    <small class="text-secondary"
+                    <small class="text-secondary">{{currentSinger}}</small>
                   </div>
                   <small class="text-secondary" >{{currentAlbum.album}}</small>
                 </div>
