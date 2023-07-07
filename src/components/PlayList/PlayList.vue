@@ -59,6 +59,17 @@ export default {
     }
   },
   methods: {
+    targetPlayListData(name) {
+      return this.playlist_datas[name];
+    },
+    edit_list() {
+      if (!this.is_edit_mode) {
+        for (let item of this.currentPlayList){
+          this.$set(item, "checked", false);
+        }
+      }
+      this.$set(this.playListData, "edit_mode", !this.is_edit_mode);
+    },
     showPopovers(index) {
       this.currentPopoverIndex = index;
       setTimeout(() => {
@@ -66,7 +77,7 @@ export default {
       }, 4000);
     },
     selectSong({ item, index }) {
-      console.log(`selectSong ${index} ${this.name} ${this.p2a}`);
+      console.log(`selectSong ${index} in ${this.name} p2a is ${this.p2a}`);
       if (! this.player ) return;
 
       this.player.stopUpdateDuration();
@@ -77,7 +88,7 @@ export default {
         this.player.changeIndexAndVideo(index);
       } else {
         this.$emit("update_p2a", this.name);
-        this.init({playlist_name: this.name, currentIndex: index});
+        this.init({playlist_name: this.name, currentIndex: index, albumIndex: this.targetPlayListData(this.name).albumIndex});
       }
 
       if (this.musicType === "Daily Mix") {
