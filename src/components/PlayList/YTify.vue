@@ -157,9 +157,10 @@ export default {
     selectSinger({ item, index }) {
       if ( item.id === this.playList[this.musicType][this.albumIndex].id && this.isPlay ) return;
 
-      console.log("selectSinger");
       //this.albumIndex = index;
-      this.init(this.playlist2attach, undefined, index);
+      this.playlist2attach = "main";
+      this.init({playlist_name: this.playlist2attach, musicType: item.type, albumIndex: index});
+      console.log("selectSinger, p2a is ", this.playlist2attach);
 
       /*if (this.musicType === "Daily Mix") {
         this.currentSinger = this.currentPlayList[this.currentIndex].singer;
