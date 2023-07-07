@@ -92,7 +92,7 @@
               <!-- OVERVIEW -->
               <div v-if="playListStatus==='OVERVIEW'">
                 <!-- PlayList -->
-                <PlayList ref="playlist" :playList="playList" :playlist_datas="playlist_datas" :player="this.$refs.player" :name="'main'"></PlayList>
+                <PlayList ref="playlist" :playList="playList" :playlist_datas="playlist_datas" :player="this.$refs.player" :name="'main'" :p2a="playlist2attach" @update_p2a="playlist2attach = $event" :init="init"></PlayList>
                 <div class="text-secondary text-left px-3 pt-3 pb-5 d-flex flex-column">
                   <small>若音樂無法正常收聽，請至 Youtube 撥放。</small>
                   <small>{{copyright}}</small>
@@ -127,7 +127,7 @@
             </div>
           </div>
         </template>
-        <Search :playList="playList" :playlist_datas="playlist_datas" :player="this.$refs.player" @selectSinger="selectSinger" @init="init" v-if="navbar==='Search'">
+        <Search :playList="playList" :playlist_datas="playlist_datas" :player="this.$refs.player" :p2a="playlist2attach" @update_p2a="playlist2attach = $event" @selectSinger="selectSinger" :init="init" v-if="navbar==='Search'">
         </Search>
       </div>
     </div>

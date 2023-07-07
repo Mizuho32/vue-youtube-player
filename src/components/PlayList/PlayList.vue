@@ -19,7 +19,7 @@ import PlayListItem from "./PlayListItem";
 
 export default {
   name: "PlayList",
-  props: ["playList", "playlist_datas", "player", "name"],
+  props: ["playList", "playlist_datas", "player", "name", "p2a", "init"],
   data() {
     return {
       currentPopoverIndex: -1,
@@ -88,22 +88,24 @@ export default {
       }, 4000);
     },
     selectSong({ item, index }) {
-      console.log(`selectSong ${this.player}`);
+      console.log(`selectSong ${index} ${this.name} ${this.p2a}`);
       if (! this.player ) return;
 
       this.player.stopUpdateDuration();
       this.player.pausePlay();
+      this.player.currentTime = 0;
 
-      // 點選歌曲
-      //this.player.currentIndex = index;
-      //this.player.changeVideo(item.videoId);
-      //this.player.currentSong = item.song;
-      //this.player.currentSongInfo = item;
-      this.player.changeIndexAndVideo(index);
+      if (this.name == this.p2a) {
+        this.player.changeIndexAndVideo(index);
+      } else {
+        this.$emit("update_p2a", this.name);
+        this.init(this.name, undefined, index);
+      }
 
       if (this.musicType === "Daily Mix") {
         this.currentSinger = this.currentPlayList[this.currentIndex].singer;
       }
+
       this.$nextTick(function() {
         this.player.autoPlay();
       });

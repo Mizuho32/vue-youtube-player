@@ -149,10 +149,10 @@ export default {
     }
   },
   methods: {
-    init(playList) {
+    init(videoId = undefined) {
       //this.playList = playList;
-      console.log(`player init to ${this.playlist2attach} ${this.currentSongInfo.videoId}`);
-      this.changeVideo(this.currentSongInfo.videoId);
+      console.log(`player init to ${this.playlist2attach}`, this.currentSong);
+      this.changeVideo(videoId || this.currentSongInfo.videoId);
 
       //this.currentAlbum = item;
       //this.currentSong = item.songs[this.currentIndex].song;
@@ -194,6 +194,7 @@ export default {
       this.changeVideo(this.currentSongInfo.videoId);
     },
     changeVideo(id) {
+      // FIXME: if id is already the same
       this.videoId = id;
       this.isLoaded = false;
     },
