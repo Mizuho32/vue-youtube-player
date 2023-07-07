@@ -414,11 +414,13 @@ export default {
                 <div class="img-thumb img-cover mr-2" :style="`background-image: url(${publicPath}${currentAlbumImg})`"></div>
                 <div class="d-flex flex-column text-left">
                   <div class="text-white d-flex align-items-center mb-1">
+                    <small class="text-secondary" >#{{currentIndex+1}}</small>
                     <h5 class="h5 mb-0">{{currentSong}}</h5>
+                    <p> by </p>
+                    <small class="text-secondary" v-if="musicType!=='Daily Mix'">{{currentSinger}}</small>
+                    <small class="text-secondary"
                   </div>
-                  <small class="text-secondary" v-if="musicType!=='Daily Mix'">{{currentSinger}}</small>
-                  <small class="text-secondary"
-                    v-if="musicType==='Daily Mix'">{{currentPlayList[currentIndex].singer}}</small>
+                  <small class="text-secondary" >{{currentAlbum.album}}</small>
                 </div>
               </div>
               <!-- PlayListController -->
