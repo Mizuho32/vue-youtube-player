@@ -23,8 +23,6 @@ export default {
   data() {
     return {
       currentPopoverIndex: -1,
-      //player: undefined,
-
       /*
       Album: undefined,
       AlbumImg: "",
@@ -40,7 +38,7 @@ export default {
   created: function () {
   },
   mounted: function () {
-    console.log('mounted');
+    //console.log('mounted');
     //console.log(this.player);
   },
   computed: {
@@ -61,26 +59,6 @@ export default {
     }
   },
   methods: {
-    /*reset(album, player) {
-      //this.player = player;
-
-      let data = this.playlist_datas[this.name];
-      this.musicType = data["musicType"];
-      this.Album = this.playList[this.musicType][data["albumIndex"]];
-      //this.Album = album || this.Album;
-      console.log(`PL reset ${this.Album} ${player}`);
-      console.log(this.playList, this.playlist_datas);
-
-      let item = this.Album;
-      this.currentSong = item.songs[this.currentIndex].song;
-      this.currentSongInfo = item.songs[this.currentIndex];
-      //this.currentPlayList = item.songs || [];
-      this.currentAlbumImg = item.img;
-      this.currentSinger = item.singer;
-      //this.musicType = item.type;
-
-      //this.changeVideo(item.songs[this.currentIndex].videoId);
-    },*/
     showPopovers(index) {
       this.currentPopoverIndex = index;
       setTimeout(() => {
