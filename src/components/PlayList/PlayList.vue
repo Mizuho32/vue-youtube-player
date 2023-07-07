@@ -99,7 +99,7 @@ export default {
         this.player.changeIndexAndVideo(index);
       } else {
         this.$emit("update_p2a", this.name);
-        this.init(this.name, undefined, index);
+        this.init({playlist_name: this.name, currentIndex: index});
       }
 
       if (this.musicType === "Daily Mix") {

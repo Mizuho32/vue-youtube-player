@@ -49,7 +49,7 @@ export default {
       for (let [k,v] of Object.entries(response.data)) {
         vm.$set(this.playList, k, v);
       }
-      vm.init();
+      vm.init({});
       vm.player.ytplayer.setVolume(100);
     });
   },
@@ -127,7 +127,7 @@ export default {
         this.currentPopoverIndex = -1;
       }
     },
-    init(playlist_name = "main", musicType = undefined, albumIndex = 0) {
+    init({playlist_name = "main", musicType = undefined, albumIndex = 0, currentIndex = 0}) {
       console.log(`init ${playlist_name} to ${musicType}, ${albumIndex}`);
       this.player.stopUpdateDuration();
       this.player.pausePlay();
@@ -137,7 +137,7 @@ export default {
 
       this.$set(this.playlist_datas[playlist_name], "musicType"   , set_musicType);
       this.$set(this.playlist_datas[playlist_name], "albumIndex"  , albumIndex);
-      this.$set(this.playlist_datas[playlist_name], "currentIndex", 0);
+      this.$set(this.playlist_datas[playlist_name], "currentIndex", currentIndex);
 
 
       let item = this.playList[this.musicType][this.albumIndex];
