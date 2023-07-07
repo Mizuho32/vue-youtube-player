@@ -151,6 +151,7 @@ export default {
   methods: {
     init(playList) {
       //this.playList = playList;
+      console.log(`player init to ${this.playlist2attach} ${this.currentSongInfo.videoId}`);
       this.changeVideo(this.currentSongInfo.videoId);
 
       //this.currentAlbum = item;
@@ -279,7 +280,7 @@ export default {
         } else {
           nextIndex++;
         }
-        if (nextIndex === total) currentIndex = 0;
+        if (nextIndex === total) nextIndex = 0;
         console.log(`loopSong, nextidx ${nextIndex}`);
 
         //this.reset(this.currentAlbum);
