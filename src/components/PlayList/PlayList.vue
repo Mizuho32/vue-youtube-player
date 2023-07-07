@@ -52,7 +52,7 @@ export default {
       return [];
     },
     isBuffering() {
-      if (this.player) return this.player.isBuffering;
+      if (this.player) return this.player.isBuffering || !this.player.isLoaded;
       return false;
     },
     currentIndex() {
