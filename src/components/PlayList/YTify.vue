@@ -142,19 +142,9 @@ export default {
 
       let item = this.playList[this.musicType][this.albumIndex];
       this.currentBackGround = this.publicPath + item.backgroundImg;
-      //console.log(`YT ${item}`);
-      //this.reset(item);
+      //console.log(`YT init to `, {pld: this.currentPlayListData});
       this.player.init(this.videoId);
     },
-    /*reset(item) { // do reset and change video
-      //this.currentAlbumImg = item.img;
-
-      //this.currentSinger = item.singer;
-      //this.currentPlayList = item.songs || [];
-      //this.copyright = item.copyright;
-
-      //this.playlist.reset(item, this.player);
-    },*/
     followHandler(item) {
       item.isFollow = !item.isFollow;
       let follower = parseInt(item.followers.replace(/,/g, ""));
