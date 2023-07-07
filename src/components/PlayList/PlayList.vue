@@ -4,7 +4,7 @@
   <template v-if="currentPlayList && currentPlayList.length>0">
     <PlayListItem v-for="(item,index) in currentPlayList" :key="`${index}-${item.song}`" :item="item" :index="index"
       :isBuffering="isBuffering" :currentIndex="currentIndex" @selectSong="selectSong" @showPopovers="showPopovers" v-if="item.song">
-      <a class="position-absolute pop text-white" :href="'https://www.youtube.com/watch?v='+item.videoId" target="_blank"
+    <a class="position-absolute pop text-white" :href="`https://www.youtube.com/watch?v=${item.videoId}&t=${item.start}`" target="_blank"
         style="top: 24px;left: -40px;" v-show="currentPopoverIndex === index">Youtube
       </a>
     </PlayListItem>
