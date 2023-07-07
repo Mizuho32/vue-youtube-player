@@ -194,11 +194,15 @@ export default {
       this.changeVideo(this.currentSongInfo.videoId);
     },
     changeVideo(id) {
-      // FIXME: if id is already the same
+      if (this.videoId === id) return;
       this.videoId = id;
       this.isLoaded = false;
     },
     changeSong(click) {
+      this.stopUpdateDuration();
+      this.pausePlay();
+      this.currentTime = 0;
+
       let album = this.currentAlbum;
 
       // 上一首或下一首
@@ -233,8 +237,11 @@ export default {
 
         this.ytplayer.getCurrentTime().then(currentTime => {
           if (this.currentSongInfo.end && this.currentSongInfo.end < currentTime) { // song ended
-            if (this.processInterval !== null) // currentTime > end but changed by changeSong() => this.processInterval is null
+            // currentTime > end but changed by changeSong() => this.processInterval is null
+            if (this.processInterval !== null) {
+              console.log("currentTime > end but changed by changeSong() => this.processInterval is null");
               this.loopSong();
+            }
           } else {
             if (this.currentSongInfo.start)
               currentTime -= this.currentSongInfo.start;
@@ -265,7 +272,7 @@ export default {
       if (this.isLoop) {
         this.loopCurrentSong();
       } else { // called when playing ended
-        console.log(`loopSong ${this.currentIndex}`);
+        console.log(`loopSong cIdx=${this.currentIndex}`);
 
         if (this.currentSongInfo.end)
             this.ytplayer.pauseVideo();
@@ -296,7 +303,7 @@ export default {
       let start = this.currentSongInfo.start
       let vm = this;
 
-      if (!start) return;
+      if (!typeof(start) === "number") return;
 
       // Wait load
       // await new Promise(resolve => setTimeout(resolve, 5000));
