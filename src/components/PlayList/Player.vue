@@ -114,7 +114,7 @@ export default {
       let cidx = data["currentIndex"];
 
       if (albums && albums.length > 0   &&  songs && songs.length > 0)
-        return songs[cidx].song;
+        return songs?.[cidx]?.song || "";
       return "";
     },
     currentSongInfo() {
