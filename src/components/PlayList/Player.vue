@@ -109,9 +109,12 @@ export default {
     },
     currentSong() {
       let data = this.playlist_datas[this.playlist2attach];
+      let albums = this.playList[data["musicType"]];
+      let songs = albums?.[data["albumIndex"]].songs;
+      let cidx = data["currentIndex"];
 
-      if (this.playList[data["musicType"]])
-        return this.playList[data["musicType"]][data["albumIndex"]].songs[data["currentIndex"]].song;
+      if (albums && albums.length > 0   &&  songs && songs.length > 0)
+        return songs[cidx].song;
       return "";
     },
     currentSongInfo() {
