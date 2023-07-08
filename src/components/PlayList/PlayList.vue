@@ -1,13 +1,17 @@
 <template>
 <div>
+<!-- List UIs -->
 <div class="d-flex">
   <div v-if="is_edit_mode">
     <input type="checkbox" v-model="all_check"/>
-    <button @click="deleteSong">削除</button>
+    <button class="btn btn-danger" @click="deleteSong">削除</button>
   </div>
-  <button @click="edit_list">編集</button>
-  <button >追加</button>
+  <button class="btn btn-success" data-toggle="button" aria-pressed="false" autocomplete="off" @click="edit_list">編集</button>
+
+  <ModalDupAdd :playList=playList :currentPlayList=currentPlayList ref="modal"/>
+  <button class="btn btn-success" @click="dupAddList">追加</button>
 </div>
+
 <ul class="list-group pt-4">
   <!-- 喜歡的歌曲 -->
   <template v-if="currentPlayList && currentPlayList.length>0">
@@ -22,13 +26,16 @@
     </div>
   </template>
   <div v-else>沒有相關歌曲。</div>
-
 </ul>
+
 </div>
 </template>
 
 <script>
+
 import PlayListItem from "./PlayListItem";
+import ModalDupAdd from "./ModalDupAdd";
+
 
 export default {
   name: "PlayList",
@@ -48,6 +55,7 @@ export default {
   },
   components: {
     PlayListItem,
+    ModalDupAdd,
   },
   created: function () {
     this.playListData = this.playlist_datas[this.name];
@@ -82,10 +90,15 @@ export default {
     }
   },
   methods: {
-    copyList() {
+    dupAddList() {
+      this.$refs.modal.title = "追加、または新規作成";
+      this.$vfm.show('dupAddModal');
+
       // empty?
       // system?
+      // index calc
       // mark as edited
+      //失敗時にJSONで表示
     },
     deleteSong() {
       // compare
