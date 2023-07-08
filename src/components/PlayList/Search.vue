@@ -22,52 +22,23 @@ export default {
   props: ["playList", "playlist_datas", "player", "p2a", "init"],
   data() {
     return {
-      publicPath: "./",
-      currentIndex: null,
-      currentItem: {},
       searchQuery: '明日',
-
-      isBuffering: false,
-      currentIndex: 0,
-      currentPopoverIndex: 0,
-      currentPlayList: []
     };
   },
   components: {
     PlayList,
   },
   watch: {
-    currentItem(newValue, oldValue) {
-      if (oldValue.id !== newValue.id) {
-        this.emitHandler(newValue, this.currentIndex);
-      }
-    }
   },
   computed: {
   },
   methods: {
-    dummy(){
-    },
-    selectHandler(item, index) {
-      this.currentIndex = index;
-      this.currentItem = item;
-    },
-    emitHandler(item, index) {
-      this.$emit("selectSinger", { item, index });
-    },
     emitHandler2(ev) {
       this.$emit("update_p2a", ev);
     },
     async search() {
       let response = await this.axios.get("./api/search", {params: {query: this.searchQuery}});
-      //console.log(response.data);
-      //this.playList["search_result"] = response.data["search_result"];
       this.$set(this.playList, "search_result", response.data["search_result"]);
-      //console.log(this.playList);
-      // this.$emit("init", "search_result", "search");
-      //this.player.setVolume(100);
-      //console.log(this.currentPlayList,this.playList["search_result"][0].songs);
-      //this.currentPlayList = this.playList["search_result"][0].songs;
     }
   }
 };
