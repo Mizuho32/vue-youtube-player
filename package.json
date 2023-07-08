@@ -30,6 +30,7 @@
     "gh-pages": "^3.2.3",
     "sass": "^1.56.0",
     "sass-loader": "^7.1.0",
+    "vue-final-modal": "^2.4.3",
     "vue-template-compiler": "^2.7.13"
   },
   "eslintConfig": {
