@@ -9,7 +9,7 @@
           <div
             class="nav-link text-white d-flex flex-column"
             :class="{ 'text-success': index === currentIndex }"
-            style="                                                                 cursor:pointer"
+            style="cursor:pointer"
             @dblclick.prevent="selectHandler(item, index)"
           >
             <div class="d-flex">
