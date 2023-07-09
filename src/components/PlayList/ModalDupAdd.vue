@@ -76,7 +76,33 @@ export default {
       // FIXME: imgs
       return {"album":name,"id":uuid,"singer":"Rin","type":"user","img":"/jpg/Rin/playlist_icon.jpg","backgroundImg":"/jpg/Rin/header.jpg","songs": songs};
     },
+
     make_albums() {
+      //{:user_id=>"test",
+      //     :list_ids=>["uuid1"],
+      //     :names=>["name1"],
+      //     :videos=>[{:video_id=>"ujfHbxE19GY", :video_start=>46, :video_end=>536}]}
+
+      const user_id = this.$root.$children[0].$children[0].$data.user_id;
+      console.log(user_id);
+
+      const id2name = Object.fromEntries(
+        this.created_albums
+          .filter(item => item.name)
+          .map(item => [item.id || crypto.randomUUID(), item.name]));
+      const data = { user_id: user_id, list_ids: Object.keys(id2name), names: Object.values(id2name),
+      videos: this.currentPlayList.map((item2, idx2)=>{
+            return {"video_id": item2.videoId, "video_start": item2.start, "video_end": item2.end};
+      })};
+
+      console.log(data);
+
+      this.axios.post('./api/create_lists', data).then(response => {
+        console.log('body:', response.data);
+      });
+
+
+      return;
       let uuid2idx = Object.fromEntries(this.user_albums.map((album, idx) => [album.id, idx]));
 
       this.user_albums.forEach((item, idx) =>{
