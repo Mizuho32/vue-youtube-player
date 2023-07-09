@@ -1,8 +1,17 @@
 <template>
   <div>
-    <div>
-      <input class="font-weight-bold text-center mt-3 mb-3" type="text" v-model="searchQuery" placeholder="検索キーワード">
-      <button @click="search">検索</button>
+    <div class="input-group mb-3 mt-3">
+      <div class="input-group-prepend">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown">Type</button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="#">name</a>
+          <a class="dropdown-item" href="#">artist</a>
+        </div>
+      </div>
+      <input class="form-control font-weight-bold text-center" type="text" v-model="searchQuery" placeholder="検索キーワード">
+      <div class="input-group-append">
+        <button class="btn btn-outline-secondary" @click="search">検索</button>
+      </div>
     </div>
     <PlayList :playList="playList" :playlist_datas="playlist_datas" :player="player" :name="'search'" :p2a="p2a" @update_p2a="emitHandler2($event)" :init="init"></PlayList>
   </div>
