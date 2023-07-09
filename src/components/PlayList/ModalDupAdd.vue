@@ -6,8 +6,8 @@
     tabindex="-1"
     role="dialog"
     aria-labelledby="ModalDupAdd"
-    aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    aria-hidden="true" @click="closeModal">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document" @click.stop>
       <div class="modal-content d-flex flex-column">
         <div class="d-flex flex-row-reverse justify-content-between" style="height: 2em;">
           <button class="btn btn-danger btn-sm font-weight-bold" aria-label="Close" @click="closeModal">close</button>
