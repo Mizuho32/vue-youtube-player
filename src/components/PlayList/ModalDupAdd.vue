@@ -11,7 +11,7 @@
       <div class="modal-content d-flex flex-column">
         <div class="d-flex flex-row-reverse justify-content-between" style="height: 2em;">
           <button class="btn btn-danger btn-sm font-weight-bold" aria-label="Close" @click="closeModal">close</button>
-          <h1 class="h2 text-white font-weight-bold mb-4">{{title}}</h1>
+          <h3 class="h3 text-white font-weight-bold mb-4">{{title}}</h3>
         </div>
         <div
           class="modal-body text-left text-white p-5 d-flex align-items-left flex-column justify-content-center">
@@ -21,24 +21,27 @@
           <h1 class="h2 font-weight-bold mb-4">
             即享 3 個月熱門音樂
             </h1>-->
-          <p class="text-light">
+          <h3 class="h3 font-weight-bold mb-4">
             プレイリストの追加先を選択、あるいは新規作成して下さい。
+          </h3>
+          <p class="text-secondary">
+            同時に複数のリストに追加、新規作成できます。
           </p>
           <ul class="list-group pt-4">
             <div v-for="(item,index) in albums" :key="`${index}-type`" class="d-flex justify-content-start">
               <li>
                 <div v-if="item.id"><label>{{item.name}}</label><input type="checkbox" v-model="item.checked"></div>
                 <div v-else class="input-group mb-3 mt-3">
-                  <button class="btn btn-danger" @click="del_album(index)" v-if="item.name && !item.id"/>-</button>
+                  <button class="btn btn-danger" @click="del_album(index)" v-if="item.name && !item.id">-</button>
                   <input class="form-control" type="text" v-model="item.name" placeholder="New..."/>
-                  <button class="btn btn-success" @click="add_album(item)"/>+</button>
+                  <button class="btn btn-success" @click="add_album(item)">+</button>
                   <input type="checkbox" v-model="item.checked" />
                 </div>
               </li>
             </div>
           </ul>
           <button class="btn btn-success my-3 font-weight-bold" @click="make_albums">
-            リスト作成
+            追加と作成
           </button>
         </div>
       </div>
