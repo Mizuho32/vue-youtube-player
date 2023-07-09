@@ -91,7 +91,7 @@ export default {
   },
   methods: {
     dupAddList() {
-      this.$refs.modal.title = "追加、または新規作成";
+      this.$refs.modal.title = "";
       this.$vfm.show('dupAddModal');
 
       // empty?
