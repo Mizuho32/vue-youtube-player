@@ -21,6 +21,7 @@ export default {
       currentPlayList: [],
       //currentSinger: undefined,
       copyright: "",
+      user_id: undefined,
 
       //musicType: undefined,
       navbar: "Playlist",
@@ -43,15 +44,24 @@ export default {
     PlayList,
     RelatedItem
   },
-  created() {
+  async created() {
+    this.user_id = (new URL(location.href)).searchParams.get("uid") || "";
+
     let vm = this;
-    this.axios.get("./api/preset").then(response => {
-      for (let [k,v] of Object.entries(response.data)) {
-        vm.$set(this.playList, k, v);
-      }
-      vm.init({});
-      vm.player.ytplayer.setVolume(100);
-    });
+    let response = await this.axios.get("./api/preset");//.then(response => {});
+    for (let [k,v] of Object.entries(response.data)) {
+      vm.$set(this.playList, k, v);
+    }
+
+    const params = {user_id: this.user_id};
+    response = await this.axios.get("./api/user", { params });
+    for (let [k,v] of Object.entries(response.data)) {
+      console.log(v);
+      vm.$set(this.playList, k, v);
+    }
+
+    vm.init({});
+    vm.player.ytplayer.setVolume(100);
   },
   mounted() {
   },
