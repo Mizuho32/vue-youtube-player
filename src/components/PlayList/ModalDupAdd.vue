@@ -22,7 +22,7 @@
             即享 3 個月熱門音樂
             </h1>-->
           <h3 class="h3 font-weight-bold mb-4">
-            プレイリストの追加先を選択、あるいは新規作成して下さい。
+            {{songs2add.length}}件の追加先を選択、あるいは新規作成して下さい。
           </h3>
           <p class="text-secondary">
             同時に複数のリストに追加、新規作成できます。
@@ -59,16 +59,24 @@ export default {
       showModal: false,
       title: "追加、または新規作成",
       created_albums: [{name: "", id:"", checked: true}],
-      user_albums: [],
     }
   },
   created() {
     //console.log(Object.keys(this.playList));
-    this.user_albums = this.playList.user.map( (al)=>{return {name: al.album, id: al.id, checked: false};} );
+    console.log(this.ytify);
   },
   computed: {
+    user_albums(){
+      return this.playList.user.map( (al)=>{return {name: al.album, id: al.id, checked: false};} );
+    },
     albums() {
       return this.created_albums.concat(this.user_albums);
+    },
+    ytify() {
+      return this.$root.$children[0].$children[0];
+    },
+    songs2add() {
+      return this.currentPlayList.filter(item => !this.$parent.is_edit_mode || item.checked);
     },
   },
   methods: {
@@ -77,50 +85,75 @@ export default {
       return {"album":name,"id":uuid,"singer":"Rin","type":"user","img":"/jpg/Rin/playlist_icon.jpg","backgroundImg":"/jpg/Rin/header.jpg","songs": songs};
     },
 
-    make_albums() {
+    async make_albums() {
+
+      const user_id = this.ytify.$data.user_id;
+      console.log("user_id", user_id);
+
+      const id2name = Object.fromEntries(
+        this.albums
+          .filter(item => item.name && item.checked)
+          .map(item => [item.id || crypto.randomUUID(), item.name]));
+      // edit_mode => checked
+      const data = {
+        user_id: user_id, list_ids: Object.keys(id2name), names: Object.values(id2name),
+        videos: this.songs2add
+          .map(item=>({"video_id": item.videoId, "video_start": item.start, "video_end": item.end}))
+      };
+
       //{:user_id=>"test",
       //     :list_ids=>["uuid1"],
       //     :names=>["name1"],
-      //     :videos=>[{:video_id=>"ujfHbxE19GY", :video_start=>46, :video_end=>536}]}
+      //     :videos=>[{:video_id=>"v1", :video_start=>46, :video_end=>536}]}
+      console.log("send", data);
+      //return;
 
-      const user_id = this.$root.$children[0].$children[0].$data.user_id;
-      console.log(user_id);
+      const response = await this.axios.post('./api/create_lists', data)
 
-      const id2name = Object.fromEntries(
-        this.created_albums
-          .filter(item => item.name)
-          .map(item => [item.id || crypto.randomUUID(), item.name]));
-      const data = { user_id: user_id, list_ids: Object.keys(id2name), names: Object.values(id2name),
-      videos: this.currentPlayList.map((item2, idx2)=>{
-            return {"video_id": item2.videoId, "video_start": item2.start, "video_end": item2.end};
-      })};
-
-      console.log(data);
-
-      this.axios.post('./api/create_lists', data).then(response => {
-        console.log('body:', response.data);
-      });
+      //{"status"=>"ok", "return"=>{"uuid1"=>{"next_index"=>0, "fails"=>[]}}}
+      console.log('receive', response.data);
 
 
-      return;
-      let uuid2idx = Object.fromEntries(this.user_albums.map((album, idx) => [album.id, idx]));
+      if (response.data.status !== "ok") {
+        alert(`DBへの追加でエラー\n${response.data}`);
+        return;
+      }
 
-      this.user_albums.forEach((item, idx) =>{
-        if (item.checked) {
-          for (let toadd of this.currentPlayList)
-            this.playList.user[ uuid2idx[item.id] ].songs.push(toadd); // FIXME: index calc
+      ///// Index calculation ////
+      // FIXME: should be replaced by enhanced album system
+      const songs_added_uuids = response.data.return;
+      // for existing user playlists
+      const uuid2idx = Object.fromEntries(this.user_albums.map((album, idx) => [album.id, idx]));
+
+      Object.keys(songs_added_uuids).forEach(uuid => {
+        const obj = songs_added_uuids[uuid]
+        let next_index = obj.next_index;
+        const fails = obj.fails;
+
+        const album_index = uuid2idx[uuid];
+        let album2add = undefined;
+
+        if (album_index >= 0) {
+          album2add = this.playList.user[album_index];
+        } else {
+          album2add = this.new_album(id2name[uuid], uuid, []);
+          this.playList.user.push(album2add);
         }
+
+        this.songs2add.forEach( (song2add, idx) => {
+          let copied = { ...song2add };
+
+          if (fails[0] != idx) {
+            copied.index = next_index++;
+            console.log(copied.index);
+            album2add.songs.push(copied);
+          } else {
+            fails.splice(0, 1); // remove first
+          }
+        });
+
       });
 
-      this.created_albums.forEach((item, idx)=>{
-        if (item.name && item.checked) {
-          // FIXME: goodway
-          let songs = this.currentPlayList.map((item2,idx2)=>{
-            return {"song": item2.song, "videoId": item2.videoId, "duration": item2.duration, "start": item2.start, "end": item2.end, "index": idx2};
-          });
-          this.playList.user.push(this.new_album(item.name, `uuid ${item.name}`, songs));
-        }
-      });
       this.created_albums = [{name: "", id:"", checked: true}];
     },
     add_album(item) {
