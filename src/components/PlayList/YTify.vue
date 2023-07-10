@@ -137,7 +137,7 @@ export default {
         this.currentPopoverIndex = -1;
       }
     },
-    init({playlist_name = "main", musicType = undefined, albumIndex = 0, currentIndex = 0}) {
+    init({playlist_name = "main", musicType = undefined, albumIndex = 0, currentIndex = 0, autoplay = false}) {
       console.log(`init ${playlist_name} to ${musicType}, ${albumIndex}`);
       this.player.stopUpdateDuration();
       this.player.pausePlay();
@@ -153,7 +153,8 @@ export default {
       let item = this.playList[this.musicType][this.albumIndex];
       this.currentBackGround = this.publicPath + item.backgroundImg;
       //console.log(`YT init to `, {pld: this.currentPlayListData});
-      this.player.init(this.videoId);
+      if (autoplay)
+        this.player.init(this.videoId);
     },
     followHandler(item) {
       item.isFollow = !item.isFollow;

@@ -347,6 +347,11 @@ export default {
     },
 
     async startPlay() {
+      if (!this.videoId) {
+        this.init();
+        this.autoPlay(true);
+      }
+
       this.ytplayer.playVideo();
       await new Promise(resolve => setTimeout(resolve, 100));
 
