@@ -32,9 +32,9 @@
               <li>
                 <div v-if="item.id"><label>{{item.name}}</label><input type="checkbox" v-model="item.checked"></div>
                 <div v-else class="input-group mb-3 mt-3">
-                  <button class="btn btn-danger" @click="del_album(index)" v-if="item.name && !item.id">-</button>
                   <input class="form-control" type="text" v-model="item.name" placeholder="New..."/>
-                  <button class="btn btn-success" @click="add_album(item)">+</button>
+                  <button class="btn btn-danger"  @click="del_album(index)" v-if="!item.not_added">-</button>
+                  <button class="btn btn-success" @click="add_album(item)"  v-if="item.not_added">+</button>
                   <input type="checkbox" v-model="item.checked" />
                 </div>
               </li>
@@ -51,6 +51,8 @@
 </template>
 <script>
 
+const item_tmpl = {name: "", id:"", checked: true, not_added: true};
+
 export default {
   name: 'ModalDupAdd',
   props: ["currentPlayList", "playList"],
@@ -58,7 +60,7 @@ export default {
     return {
       showModal: false,
       title: "追加、または新規作成",
-      created_albums: [{name: "", id:"", checked: true}],
+      created_albums: [{...item_tmpl}],
     }
   },
   created() {
@@ -154,12 +156,14 @@ export default {
 
       });
 
-      this.created_albums = [{name: "", id:"", checked: true}];
+      this.created_albums = [{...item_tmpl}];
     },
     add_album(item) {
-      console.log(this.created_albums);
-      if (item.name)
-        this.created_albums.splice(0, 0, {name: '', id:'', checked: true});
+      //console.log(this.created_albums);
+      if (item.name) {
+        delete item.not_added
+        this.created_albums.splice(0, 0, {...item_tmpl});
+      }
     },
     del_album(index) {
         this.created_albums.splice(index, 1);
