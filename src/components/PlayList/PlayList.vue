@@ -17,7 +17,7 @@
   <template v-if="currentPlayList && currentPlayList.length>0">
     <div v-for="(item,index) in currentPlayList" :key="`${index}-${item.song}`" class="d-flex justify-content-start">
     <input type="checkbox" v-if="is_edit_mode" v-model="item.checked"/>
-    <PlayListItem :item="item" :index="index"
+    <PlayListItem :item="item" :index="item.index || index"
       :isBuffering="isBuffering" :currentIndex="currentIndex" @selectSong="selectSong" @showPopovers="showPopovers" v-if="item.song" class="flex-fill">
     <a class="position-absolute pop text-white" :href="`https://www.youtube.com/watch?v=${item.videoId}&t=${item.start}`" target="_blank"
         style="top: 24px;left: -40px;" v-show="currentPopoverIndex === index">Youtube
