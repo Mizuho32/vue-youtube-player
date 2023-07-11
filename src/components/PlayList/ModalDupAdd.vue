@@ -89,6 +89,7 @@ export default {
 
     async make_albums() {
 
+      // calc user_id, list_ids, names, songs to add
       const user_id = this.ytify.$data.user_id;
       console.log("user_id", user_id);
 
@@ -143,11 +144,11 @@ export default {
         }
 
         this.songs2add.forEach( (song2add, idx) => {
-          let copied = { ...song2add };
+          let copied = { ...song2add }; //FIXME: checked is also copied
 
           if (fails[0] != idx) {
             copied.index = next_index++;
-            console.log(copied.index);
+            console.log(copied.index, copied);
             album2add.songs.push(copied);
           } else {
             fails.splice(0, 1); // remove first
