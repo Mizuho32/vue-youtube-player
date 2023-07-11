@@ -87,7 +87,10 @@ export default {
     },
     is_edit_mode() {
       return this.playlist_datas[this.name].edit_mode;
-    }
+    },
+    ytify() {
+      return this.$root.$children[0].$children[0];
+    },
   },
   methods: {
     dupAddList() {
@@ -100,7 +103,7 @@ export default {
       // mark as edited
       //失敗時にJSONで表示
     },
-    deleteSong() {
+    async deleteSong() {
       // compare
       let new_idx = 0, new_indices = Array(this.currentPlayList.length);
       this.currentPlayList.forEach((item, idx)=>{
@@ -112,7 +115,7 @@ export default {
       let num2del = new_indices.length - new_idx;
       if (num2del === 0) return;
 
-      // currentIndex will affected
+      // check currentIndex will affected?
       let cur_del_confirmed = false;
       let nextIndex = this.currentIndex;
 
@@ -136,16 +139,56 @@ export default {
         this.player.currentTime = 0;
       }
 
+      // delete
+      let album = this.get_currentAlbum();
+      if (Object.keys(album).length !== 0) { // not empty
+        // FIXME: if big album is needed
+        //        should be replaced by enhanced album system
+        const del_idx = album.songs.filter(item => item.checked).map(item => item.index);
+
+        let res_data = undefined;
+        if (this.get_currentAlbum()?.type != "search_result") { // delete from DB
+          // send {:user_id=>"test", :list_id=>"cbeac8fb-b661-462a-a50b-b52b13628048", :indices=>[1, 3]}
+          const del_query = {user_id: this.ytify.$data.user_id, list_id: album.id, indices: del_idx}
+          console.log("send", del_query);
+          const response = await this.axios.post('./api/delete_items', del_query);
+          console.log("receive", response.data);
+
+          if (response.data.status !== "ok") {
+            alert(`アイテム削除でエラー\n${response.data}`); return;
+          }
+
+          res_data = response.data;
+          // {:from=>[3], :to=>[2]}
+          //idx_changes = response.data.return;
+        }
+
+        this.$set(album, "songs", album.songs.filter(item => !item.checked));
+
+        if (res_data.status == "ok") { // DB change and index calc
+          let idx_changes = res_data.return;
+          let from = idx_changes.from, to = idx_changes.to;
+          const min_del_idx = del_idx.sort((a,b)=>a-b)[0];
+
+          console.log("from", from);
+          album.songs.sort((a,b) =>a-b).forEach((item, idx) =>{
+            if (item.index < min_del_idx) return; // continue
+
+            if (from.length > 0) {
+              if (item.index == from[0]) {
+                item.index = to[0];
+                from.splice(0, 1);
+                to.splice(0, 1);
+              }
+            } else {
+              item.index = item.index - del_idx.length;
+            }
+          });
+        }
+      }
+
       console.log({nextIndex});
       this.$set(this.targetPlayListData(this.name), "currentIndex", nextIndex);
-
-
-      // delete
-      //console.log("Delete");
-      let album = this.get_currentAlbum();
-      if (Object.keys(album).length !== 0) {
-        this.$set(album, "songs", album.songs.filter(item => !item.checked));
-      }
     },
     edit_list() {
       let pl_type = this.get_currentAlbum()?.type;
