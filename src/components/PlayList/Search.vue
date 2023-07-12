@@ -2,11 +2,11 @@
   <div>
     <div class="input-group mb-3 mt-3">
       <div class="input-group-prepend">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown">Type</button>
-        <div class="dropdown-menu">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" @click="change_type">{{type_text}}</button>
+        <!--<div class="dropdown-menu">
           <a class="dropdown-item" href="#">name</a>
           <a class="dropdown-item" href="#">artist</a>
-        </div>
+        </div>-->
       </div>
       <input class="form-control font-weight-bold text-center" type="text" v-model="searchQuery" placeholder="検索キーワード">
       <div class="input-group-append">
@@ -32,6 +32,7 @@ export default {
   data() {
     return {
       searchQuery: '明日',
+      search_song: true,
     };
   },
   components: {
@@ -40,15 +41,21 @@ export default {
   watch: {
   },
   computed: {
+    type_text(){
+      return this.search_song ? "song" : "artist";
+    },
   },
   methods: {
     emitHandler2(ev) {
       this.$emit("update_p2a", ev);
     },
     async search() {
-      let response = await this.axios.get("./api/search", {params: {query: this.searchQuery}});
+      let response = await this.axios.post("./api/search", {query: this.searchQuery, song: this.search_song});
       this.$set(this.playList, "search_result", response.data["search_result"]);
-    }
+    },
+    change_type() {
+      this.search_song = !this.search_song;
+    },
   }
 };
 </script>
