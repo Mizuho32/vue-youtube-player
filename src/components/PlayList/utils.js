@@ -26,6 +26,19 @@ export default {
           vm.$set(album, "version", ver ? new Date(ver) : undefined);
         }
       }
-    },
+    }, //
+    // album should has id, version
+    async checkVersion(vm, axios, user_id, albums) { // albums -> inconsistent albums
+        const version_query = {user_id: user_id, list_ids: albums.map(al=>al.id)};
+        const response = await this.axios.post('./api/versions', version_query);
+        const db_pl_versions = response.data.return.map(v=>new Date(v)); // versions
+
+        console.log("check vers q, r, cur", version_query, db_pl_versions, albums.map(a=>a.version));
+
+        return albums
+          .map((al, idx) => ({al: al, ver: db_pl_versions[idx]}) )
+          .filter(({al, ver}) => (ver.getTime() != al.version.getTime()) );
+
+    }, //
 	}
 }
