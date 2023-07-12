@@ -142,13 +142,23 @@ export default {
       // delete
       let album = this.get_currentAlbum();
       if (Object.keys(album).length !== 0) { // not empty
+        // if data inconsistent
+        const version_query = {user_id: this.ytify.$data.user_id, list_ids: [album.id]};
+        const response = await this.axios.post('./api/versions', version_query);
+        const db_pl_version = new Date(response.data.return[0]);
+        console.log("check ver bef del. q, r, cur", version_query, response.data.return, album.version);
+        if (db_pl_version.getTime() != album.version.getTime()) {
+          alert("DBとプレイリストバージョンが整合しません");
+          return;
+        }
+
         // FIXME: if big album is needed
         //        should be replaced by enhanced album system
         const del_idx = album.songs.filter(item => item.checked).map(item => item.index);
 
         let res_data = undefined;
         if (this.get_currentAlbum()?.type != "search_result") { // delete from DB
-          // send {:user_id=>"test", :list_id=>"cbeac8fb-b661-462a-a50b-b52b13628048", :indices=>[1, 3]}
+          // send e.g. {:user_id=>, :list_id=>, :indices=>[1, 3]}
           const del_query = {user_id: this.ytify.$data.user_id, list_id: album.id, indices: del_idx}
           console.log("send", del_query);
           const response = await this.axios.post('./api/delete_items', del_query);
@@ -159,6 +169,7 @@ export default {
           }
 
           res_data = response.data;
+          album.version = new Date(res_data.return.version);
           // {:from=>[3], :to=>[2]}
           //idx_changes = response.data.return;
         }
