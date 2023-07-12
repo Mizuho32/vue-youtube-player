@@ -113,7 +113,7 @@ export default {
       return {};
     },
     videoId() {
-      return this.currentSongInfo.videoId;
+      return this.currentSongInfo?.videoId || "";
     },
     sameTypeList() {
       return this.playList[this.musicType];
@@ -136,8 +136,8 @@ export default {
     },
     init({playlist_name = "main", musicType = undefined, albumIndex = 0, currentIndex = 0, autoplay = false}) {
       console.log(`init ${playlist_name} to ${musicType}, ${albumIndex}`);
-      this.player.stopUpdateDuration();
-      this.player.pausePlay();
+      this.player?.stopUpdateDuration();
+      this.player?.pausePlay();
 
       let pl = this.playList;
       let set_musicType = musicType || this.musicType || Object.keys(pl)[0];
