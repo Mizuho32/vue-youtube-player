@@ -93,11 +93,20 @@ export default {
       const user_id = this.ytify.$data.user_id;
       console.log("user_id", user_id);
 
+      // FIXME: consistency check
+      const uuid2album = Object.fromEntries(this.playList.user.map((album, idx) => [album.id, album]));
+      const check_albums = this.user_albums.filter(ua=>ua.checked).map(ua => uuid2album[ua.id]);
+      const wrongs = await this.checkVersion(this, this.axios, this.ytify.$data.user_id, check_albums);
+      if (wrongs.length > 0) {
+        const inconsists = wrongs.map(({al, ver}) => al.album).join("\n"); // names
+        alert(`以下のプレイリストとDBが不整合\n${inconsists}`);
+        return false;
+      }
+
       const id2name = Object.fromEntries(
         this.albums
           .filter(item => item.name && item.checked)
           .map(item => [item.id || crypto.randomUUID(), item.name]));
-      // edit_mode => checked
       const data = {
         user_id: user_id, list_ids: Object.keys(id2name), names: Object.values(id2name),
         videos: this.songs2add
@@ -142,6 +151,8 @@ export default {
           album2add = this.new_album(id2name[uuid], uuid, []);
           this.playList.user.push(album2add);
         }
+        album2add.version = new Date(obj.version);
+        console.log("create ver", album2add.version);
 
         this.songs2add.forEach( (song2add, idx) => {
           let copied = { ...song2add }; //FIXME: checked is also copied
