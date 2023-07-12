@@ -167,7 +167,7 @@ export default {
 
       //this.albumIndex = index;
       this.playlist2attach = "main";
-      this.init({playlist_name: this.playlist2attach, musicType: item.type, albumIndex: index});
+      this.init({playlist_name: this.playlist2attach, musicType: item.type, albumIndex: index, autoplay: true});
       console.log("selectSinger, p2a is ", this.playlist2attach);
 
       /*if (this.musicType === "Daily Mix") {
