@@ -2,14 +2,24 @@
 <div>
 <!-- List UIs -->
 <div class="d-flex">
-  <div v-if="is_edit_mode">
+  <div v-if="is_edit_mode" class="d-flex flex-row">
     <input type="checkbox" v-model="all_check"/>
-    <button class="btn btn-danger" @click="deleteSong">削除</button>
   </div>
-  <button class="btn btn-success" data-toggle="button" aria-pressed="false" autocomplete="off" @click="edit_list">編集</button>
+
+  <div class="input-group">
+    <div class="input-group-prepend" v-if="is_edit_mode">
+      <button class="btn btn-danger material-icons ml-2" @click="deleteSong">delete</button>
+    </div>
+    <input class="form-control font-weight-bold text-center" type="text" v-model="get_currentAlbum().album"
+    :readonly="!is_edit_mode">
+    <div class="input-group-append">
+      <button class="btn btn-success material-icons" data-toggle="button" aria-pressed="false"
+        autocomplete="off" @click="edit_list">edit</button>
+    </div>
+  </div>
+  <button class="btn btn-success material-icons" @click="dupAddList">content_copy</button>
 
   <ModalDupAdd :playList=playList :currentPlayList=currentPlayList ref="modal"/>
-  <button class="btn btn-success" @click="dupAddList">追加</button>
 </div>
 
 <ul class="list-group pt-4">
