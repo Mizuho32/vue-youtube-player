@@ -9,6 +9,9 @@ import PlayListFollowerBtn from "./PlayListFollowerBtn";
 import PlayList from "./PlayList";
 import RelatedItem from "./RelatedItem";
 
+import utils from './utils'
+
+Vue.mixin(utils)
 Vue.use(VueAxios, axios);
 export default {
   name: "YTify",
@@ -48,17 +51,11 @@ export default {
     this.user_id = (new URL(location.href)).searchParams.get("uid") || "";
 
     let vm = this;
-    let response = await this.axios.get("./api/preset");//.then(response => {});
-    for (let [k,v] of Object.entries(response.data)) {
-      vm.$set(this.playList, k, v);
-    }
-
+    await this.loadPlaylist(vm, axios, "./api/preset");
     const params = {user_id: this.user_id};
-    response = await this.axios.get("./api/user", { params });
-    for (let [k,v] of Object.entries(response.data)) {
-      console.log(v);
-      vm.$set(this.playList, k, v);
-    }
+    await this.loadPlaylist(vm, axios, "./api/user", { params });
+
+    console.log(this.playList);
 
     vm.init({});
     vm.player.ytplayer.setVolume(100);
