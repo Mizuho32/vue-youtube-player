@@ -93,7 +93,22 @@ export default {
     },
   },
   methods: {
-    dupAddList() {
+    async checkConsist() {
+      let album = this.get_currentAlbum();
+      // empty or search_result
+      if (Object.keys(album).length == 0 || album?.type == "search_result") return true;
+
+      const wrongs = await this.checkVersion(this, this.axios, this.ytify.$data.user_id, [album]);
+      if (wrongs.length > 0) {
+        alert("DBとプレイリストバージョンが整合しません");
+        return false;
+      }
+      return true;
+    },
+    async dupAddList() {
+      if (!await this.checkConsist()) return;
+
+
       this.$refs.modal.title = "";
       this.$vfm.show('dupAddModal');
 
@@ -104,6 +119,8 @@ export default {
       //失敗時にJSONで表示
     },
     async deleteSong() {
+      if (!await this.checkConsist()) return;
+
       // compare
       let new_idx = 0, new_indices = Array(this.currentPlayList.length);
       this.currentPlayList.forEach((item, idx)=>{
@@ -142,15 +159,6 @@ export default {
       // delete
       let album = this.get_currentAlbum();
       if (Object.keys(album).length !== 0) { // not empty
-        // if data inconsistent
-        const version_query = {user_id: this.ytify.$data.user_id, list_ids: [album.id]};
-        const response = await this.axios.post('./api/versions', version_query);
-        const db_pl_version = new Date(response.data.return[0]);
-        console.log("check ver bef del. q, r, cur", version_query, response.data.return, album.version);
-        if (db_pl_version.getTime() != album.version.getTime()) {
-          alert("DBとプレイリストバージョンが整合しません");
-          return;
-        }
 
         // FIXME: if big album is needed
         //        should be replaced by enhanced album system
