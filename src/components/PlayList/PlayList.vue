@@ -112,11 +112,12 @@ export default {
       this.$refs.modal.title = "";
       this.$vfm.show('dupAddModal');
 
+      // TODO
       // empty?
       // system?
       // index calc
       // mark as edited
-      //失敗時にJSONで表示
+      // 失敗時にJSONで表示
     },
     async deleteSong() {
       if (!await this.checkConsist()) return;
