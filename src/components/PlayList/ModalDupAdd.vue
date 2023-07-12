@@ -78,13 +78,14 @@ export default {
       return this.$root.$children[0].$children[0];
     },
     songs2add() {
+                                                 // edit_mode => checked
       return this.currentPlayList.filter(item => !this.$parent.is_edit_mode || item.checked);
     },
   },
   methods: {
     new_album(name, uuid, songs) {
       // FIXME: imgs
-      return {"album":name,"id":uuid,"singer":"Rin","type":"user","img":"/jpg/Rin/playlist_icon.jpg","backgroundImg":"/jpg/Rin/header.jpg","songs": songs};
+      return {"album":name,"id":uuid,"singer":"Rin","type":"user","img":"/jpg/Rin/playlist_icon.jpg","backgroundImg":"/jpg/Rin/header.jpg", "songs": songs};
     },
 
     async make_albums() {
@@ -122,7 +123,7 @@ export default {
 
       const response = await this.axios.post('./api/create_lists', data)
 
-      //{"status"=>"ok", "return"=>{"uuid1"=>{"next_index"=>0, "fails"=>[]}}}
+      //{"status"=>"ok", "return"=>{"uuid1"=>{"next_index"=>0, "fails"=>[], "version":}}}
       console.log('receive', response.data);
 
 
