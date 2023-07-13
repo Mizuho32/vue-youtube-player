@@ -92,11 +92,12 @@ export default {
       return data["currentIndex"];
     },
     currentSinger() {
-      let data = this.currentPlayListData;
+      const data = this.currentPlayListData;
+      const singer = this.playList?.[data["musicType"]]?.[data["albumIndex"]]?.singer
 
-      if (this.playList[data["musicType"]])
-        return this.playList[data["musicType"]][data["albumIndex"]].singer;
-      return "";
+      if (singer)
+        return singer;
+      return "-";
     },
     currentSong() {
       let data = this.playlist_datas[this.playlist2attach];
