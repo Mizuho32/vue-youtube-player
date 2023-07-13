@@ -8,9 +8,11 @@
           <a class="dropdown-item" href="#">artist</a>
         </div>-->
       </div>
-      <input class="form-control font-weight-bold text-center" type="text" v-model="searchQuery" placeholder="検索キーワード">
+      <input class="form-control font-weight-bold text-center" type="text" v-model="album.searchQuery" placeholder="検索キーワード">
       <div class="input-group-append">
-        <button class="btn btn-outline-secondary" @click="search">検索</button>
+        <button class="btn btn-outline-secondary" @click="search">
+          <i class="material-icons">search</i>
+        </button>
       </div>
     </div>
     <PlayList :playList="playList" :playlist_datas="playlist_datas" :player="player" :name="'search'" :p2a="p2a" @update_p2a="emitHandler2($event)" :init="init"></PlayList>
@@ -31,9 +33,11 @@ export default {
   props: ["playList", "playlist_datas", "player", "p2a", "init"],
   data() {
     return {
-      searchQuery: '明日',
       search_song: true,
     };
+  },
+  created(){
+    this.album = this.playList.search_result[0];
   },
   components: {
     PlayList,
@@ -50,8 +54,11 @@ export default {
       this.$emit("update_p2a", ev);
     },
     async search() {
-      let response = await this.axios.post("./api/search", {query: this.searchQuery, song: this.search_song});
-      this.$set(this.playList, "search_result", response.data["search_result"]);
+      let response = await this.axios.post("./api/search", {query: this.album.searchQuery, song: this.search_song});
+      console.log(response.data);
+      for (let [k,v] of Object.entries(response.data["search_result"][0])) {
+        this.$set(this.playList.search_result[0], k, v);
+      }
     },
     change_type() {
       this.search_song = !this.search_song;
