@@ -37,7 +37,7 @@ export default {
 
         return albums
           .map((al, idx) => ({al: al, ver: db_pl_versions[idx]}) )
-          .filter(({al, ver}) => (ver.getTime() != al.version.getTime()) );
+          .filter(({al, ver}) => (ver?.getTime() != al?.version?.getTime()) );
 
     }, //
 	}
