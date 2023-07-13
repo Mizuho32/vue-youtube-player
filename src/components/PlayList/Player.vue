@@ -415,12 +415,12 @@ export default {
                 <div class="img-thumb img-cover mr-2" :style="`background-image: url(${publicPath}${currentAlbumImg})`"></div>
                 <div class="d-flex flex-column text-left">
                   <div class="text-white d-flex align-items-center mb-1">
-                    <medium class="text-secondary" >#{{currentIndex+1}}</medium>
+                    <span class="text-secondary" >#{{currentIndex+1}}</span>
                     <h5 class="h5 mb-0">{{currentSong}}</h5>
                     <p> by </p>
-                    <medium class="text-secondary">{{currentSinger}}</medium>
+                    <span class="text-secondary">{{currentSinger}}</span>
                   </div>
-                  <medium class="text-secondary" >{{currentAlbum.album}}</medium>
+                  <span class="text-secondary" >{{currentAlbum.album}}</span>
                 </div>
               </div>
               <!-- PlayListController -->
