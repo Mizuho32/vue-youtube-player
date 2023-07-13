@@ -91,52 +91,45 @@ export default {
     },
     currentAlbum() {
       let data = this.playlist_datas[this.playlist2attach];
+      const album = this.playList?.[data["musicType"]]?.[data["albumIndex"]];
 
-      if (this.playList[data["musicType"]])
-        return this.playList[data["musicType"]][data["albumIndex"]];
+      if (album) return album;
       return {};
     },
     currentAlbumImg() {
       let data = this.playlist_datas[this.playlist2attach];
+      const img_path = this.playList?.[data["musicType"]]?.[data["albumIndex"]]?.img
 
-      if (this.playList[data["musicType"]])
-        return this.playList[data["musicType"]][data["albumIndex"]].img;
+      if (img_path) return img_path;
       return "";
     },
     currentIndex() {
       let data = this.playlist_datas[this.playlist2attach];
       return data["currentIndex"];
     },
-    currentSong() {
-      let data = this.playlist_datas[this.playlist2attach];
-      let albums = this.playList[data["musicType"]];
-      let songs = albums?.[data["albumIndex"]].songs;
-      let cidx = data["currentIndex"];
-
-      if (albums && albums.length > 0   &&  songs && songs.length > 0)
-        return songs?.[cidx]?.song || "";
-      return "";
-    },
     currentSongInfo() {
       let data = this.playlist_datas[this.playlist2attach];
+      const song_info = this.playList?.[data["musicType"]]?.[data["albumIndex"]]?.songs?.[data["currentIndex"]]
 
-      if (this.playList[data["musicType"]])
-        return this.playList[data["musicType"]][data["albumIndex"]].songs[data["currentIndex"]];
-      return {};
+      return song_info || {};
+    },
+    currentSong() {
+      let data = this.playlist_datas[this.playlist2attach];
+      let cidx = data["currentIndex"];
+      const song_info = this.currentSongInfo;
+      const song = song_info?.song;
+
+      return song || "";
     },
     currentSinger() {
-      let data = this.playlist_datas[this.playlist2attach];
+      const album = this.currentAlbum;
 
-      if (this.playList[data["musicType"]])
-        return this.playList[data["musicType"]][data["albumIndex"]].singer;
-      return "";
+      return album?.singer || "-";
     },
     musicType() {
-      let data = this.playlist_datas[this.playlist2attach];
+      const album = this.currentAlbum;
 
-      if (this.playList[data["musicType"]])
-        return this.playList[data["musicType"]][data["albumIndex"]].type;
-      return "";
+      return album?.type;
     },
     ytplayer() {
       return this.$refs.youtube.player;
