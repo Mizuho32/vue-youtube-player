@@ -1,7 +1,8 @@
 <template>
 <div>
 <!-- List UIs -->
-<div class="d-flex">
+<div class="d-flex flex-column">
+  <div class="d-flex flex-row">
   <div v-if="is_edit_mode" class="d-flex flex-row">
     <input type="checkbox" v-model="all_check"/>
   </div>
@@ -17,7 +18,15 @@
         autocomplete="off" @click="edit_list">edit</button>
     </div>
   </div>
+  <button class="btn btn-success material-icons" @click="dlList">list_alt</button>
   <button class="btn btn-success material-icons" @click="dupAddList">content_copy</button>
+  </div>
+  <div>
+    <button class="btn btn-danger mt-2" @click="deleteList" v-if="is_edit_mode">
+      <span>Delete List</span>
+      <i class="material-icons">delete_forever</i>
+    </button>
+  </div>
 
   <ModalDupAdd :playList=playList :currentPlayList=currentPlayList ref="modal"/>
 </div>
@@ -25,14 +34,19 @@
 <ul class="list-group pt-4">
   <!-- 喜歡的歌曲 -->
   <template v-if="currentPlayList && currentPlayList.length>0">
-    <div v-for="(item,index) in currentPlayList" :key="`${index}-${item.song}`" class="d-flex justify-content-start">
-    <input type="checkbox" v-if="is_edit_mode" v-model="item.checked"/>
-    <PlayListItem :item="item" :index="item.index || index"
-      :isBuffering="isBuffering" :currentIndex="currentIndex" @selectSong="selectSong" @showPopovers="showPopovers" v-if="item.song" class="flex-fill">
-    <a class="position-absolute pop text-white" :href="`https://www.youtube.com/watch?v=${item.videoId}&t=${item.start}`" target="_blank"
-        style="top: 24px;left: -40px;" v-show="currentPopoverIndex === index">Youtube
-      </a>
-    </PlayListItem>
+    <div v-if="dl_list_mode">
+
+      <a class="btn btn-success material-icons" :href="dl_list_href" :download="dl_list_name">save_alt</a>
+      <textarea :value="dl_list_csv" style="width: 100%; height:50vh;"></textarea>
+    </div>
+    <div v-for="(item,index) in currentPlayList" :key="`${index}-${item.song}`" class="d-flex justify-content-start" v-else>
+      <input type="checkbox" v-if="is_edit_mode" v-model="item.checked"/>
+      <PlayListItem :item="item" :index="item.index || index"
+        :isBuffering="isBuffering" :currentIndex="currentIndex" @selectSong="selectSong" @showPopovers="showPopovers" v-if="item.song" class="flex-fill">
+      <a class="position-absolute pop text-white" :href="`https://www.youtube.com/watch?v=${item.videoId}&t=${item.start}`" target="_blank"
+          style="top: 24px;left: -40px;" v-show="currentPopoverIndex === index">Youtube
+        </a>
+      </PlayListItem>
     </div>
   </template>
   <div v-else>沒有相關歌曲。</div>
@@ -54,6 +68,10 @@ export default {
     return {
       currentPopoverIndex: -1,
       all_check: false,
+      dl_list_mode: false,
+      dl_list_csv: "",
+      dl_list_href: "",
+      dl_list_name: "リストのダウンロード",
       /*
       Album: undefined,
       AlbumImg: "",
@@ -128,6 +146,31 @@ export default {
       // index calc
       // mark as edited
       // 失敗時にJSONで表示
+    },
+    async deleteList() {
+      const confirmed = confirm("リストを削除しますか?");
+      if (!confirmed) return;
+
+      const playlist_data = this.targetPlayListData(this.name);
+      const musicType = playlist_data["musicType"], albumIndex = playlist_data["albumIndex"];
+      if (musicType != "user") return;
+
+      let album = this.playList[musicType][albumIndex];
+      console.log("DELETE LIST", album.album, album.id)
+
+      // delete from DB
+      const user_id = this.ytify.$data.user_id;
+      const list_ids = [album.id];
+      const del_query = { user_id, list_ids };
+      const response = await this.axios.post('./api/delete_lists', del_query);
+      console.log("delete list res", response.data);
+
+      // delete from UI
+      this.player.stopUpdateDuration();
+      this.player.pausePlay();
+      this.player.currentTime = 0;
+
+      this.playList?.[musicType]?.splice(albumIndex, 1);
     },
     async deleteSong() {
       if (!await this.checkConsist()) return;
@@ -219,6 +262,23 @@ export default {
 
       console.log({nextIndex});
       this.$set(this.targetPlayListData(this.name), "currentIndex", nextIndex);
+    },
+    dlList() {
+      this.dl_list_mode = !this.dl_list_mode;
+
+      const escape = text => `"${text.replace(/\"/g, '\"\"')}"`;
+
+      const csvMain = this.currentPlayList.map(item => {
+        return [escape(item.song), escape(item.videoId), item.start, item.end].join(",");
+      }).join("\n");
+      this.dl_list_csv = csvMain;
+
+      let csvContent = "data:text/csv;charset=utf-8,";
+      csvContent += '\uFEFF';
+      csvContent += csvMain;
+
+      let encodedUri = encodeURI(csvContent);
+      this.dl_list_href = encodedUri;
     },
     edit_list() {
       let pl_type = this.get_currentAlbum()?.type;
