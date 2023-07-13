@@ -60,6 +60,7 @@
 import PlayListItem from "./PlayListItem";
 import ModalDupAdd from "./ModalDupAdd";
 
+const empty_album = {album: "-", type: "preset"};
 
 export default {
   name: "PlayList",
@@ -99,11 +100,10 @@ export default {
   },
   computed: {
     currentPlayList() {
-      let data = this.playlist_datas[this.name];
+      const data = this.playlist_datas[this.name];
+      const songs = this.playList?.[data["musicType"]]?.[data["albumIndex"]]?.songs
 
-      if (this.playList[data["musicType"]])
-        return this.playList[data["musicType"]][data["albumIndex"]].songs;
-      return [];
+      return songs || [];
     },
     isBuffering() {
       if (this.player) return this.player.isBuffering || !this.player.isLoaded;
@@ -325,10 +325,9 @@ export default {
     },
     get_currentAlbum(name = this.name) {
       let data = this.playlist_datas[name];
+      const album = this.playList?.[data["musicType"]]?.[data["albumIndex"]];
 
-      if (this.playList[data["musicType"]])
-        return this.playList[data["musicType"]][data["albumIndex"]];
-      return {};
+      return album || empty_album;
     },
     targetPlayListData(name) {
       return this.playlist_datas[name];
