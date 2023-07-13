@@ -28,13 +28,14 @@ export default {
 
       //musicType: undefined,
       navbar: "Playlist",
-      playList: {},
+      playList: {user: [], preset: [], search_result: [
+        {album: "search", type: "search_result", songs:[], searchQuery: ""}] },
       playListStatus: "OVERVIEW",
       publicPath: "./",
 
       playlist_datas: {
-        main:   {musicType: undefined, albumIndex: 0, currentIndex: 0},
-        search: {musicType: "search_result", albumIndex: 0, currentIndex: 0}
+        main:   {musicType: "preset",        albumIndex: 0, currentIndex: 0},
+        search: {musicType: "search_result", albumIndex: 0, currentIndex: 0},
       },
       playlist2attach: "main",
     };
