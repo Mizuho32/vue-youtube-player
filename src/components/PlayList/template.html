@@ -11,15 +11,23 @@
         <div class="d-flex flex-column justify-content-between py-3" style="height: calc(90vh - 200px)">
           <ul class="list-group">
             <li class="text-left  mb-2">
-              <a class="text-secondary" @click="navbar='Home'" :class="{'text-success':navbar==='Home'}">Home</a>
+              <a class="text-secondary" @click="navbar='Home'" :class="{'text-success':navbar==='Home'}">
+                <i class="material-icons">home</i>
+                Home
+              </a>
             </li>
             <li class="text-left mb-2">
               <a class="text-secondary" @click="navbar='Playlist',playListStatus='OVERVIEW'"
-                :class="{'text-success':navbar==='Playlist'}">Playlist</a>
+                :class="{'text-success':navbar==='Playlist'}">
+                <i class="material-icons">list</i>
+                Playlist
+              </a>
             </li>
             <li class="text-left mb-2">
-              <a class="text-secondary" @click="navbar='Search'"
-                :class="{'text-success':navbar==='Search'}">Search</a>
+              <a class="text-secondary" @click="navbar='Search'" :class="{'text-success':navbar==='Search'}">
+                <i class="material-icons">search</i>
+                Search
+              </a>
             </li>
           </ul>
           <ul class="list-group">
