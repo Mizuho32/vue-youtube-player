@@ -8,6 +8,7 @@ import Player from "./Player";
 import PlayListFollowerBtn from "./PlayListFollowerBtn";
 import PlayList from "./PlayList";
 import RelatedItem from "./RelatedItem";
+import ModalAddUser from "./ModalAddUser";
 
 import utils from './utils'
 
@@ -46,15 +47,44 @@ export default {
     Search,
     Player,
     PlayList,
-    RelatedItem
+    RelatedItem,
+    ModalAddUser,
   },
   async created() {
-    this.user_id = (new URL(location.href)).searchParams.get("uid") || "";
+    const url_params = (new URL(location.href)).searchParams;
+    this.user_id = url_params.get("uid") || "";
+
+    if (url_params.has("uid")) {
+      const response = await axios.get("./api/check_user", { params: {user_id: this.user_id} });
+
+      if (response.data.status == "ok") {
+        document.cookie = `user_id=${encodeURIComponent(this.user_id)}`;
+      } else {
+        this.$vfm.show('addUserModal');
+      }
+    } else {
+      // from cookie
+      for (let kv of document.cookie.split(/;\s+/)) {
+        const [k, v] = kv.split("=");
+        v = decodeURIComponent(v);
+        if (k == "user_id") {
+          const response = await axios.get("./api/check_user", { params: {user_id: v} });
+          if (response.data.status == "ok") {
+            this.user_id = v;
+          } else {
+            this.user_id = "";
+          }
+        }
+      }
+    }
 
     let vm = this;
     await this.loadPlaylist(vm, axios, "./api/preset");
-    const params = {user_id: this.user_id};
-    await this.loadPlaylist(vm, axios, "./api/user", { params });
+
+    if (this.user_id) {
+      const params = {user_id: this.user_id};
+      await this.loadPlaylist(vm, axios, "./api/user", { params });
+    }
 
     console.log(this.playList);
 
