@@ -56,10 +56,19 @@ export default {
   },
   methods: {
     async check() {
-      const response = await this.axios('/api/valid_folder_id', { params: {id: this.user_id}});
+      const response = await this.axios('/api/valid_folder_id', 
+        { params: {id: encodeURIComponent(this.user_id)}});
+
+      console.log(response.data);
 
       if (response.data.status == "ok") {
         this.authed = true;
+        this.ytify.$data.user_id = response.data.return;
+
+        // change url
+        const url = new URL(location.href);
+        url.searchParams.set('uid', this.user_id);
+        history.pushState({}, '', url);
 
         //bookmark促す
         alert("作成完了。この画面でブックマークして下さい");
@@ -67,12 +76,13 @@ export default {
         // cookie
         document.cookie = `user_id=${encodeURIComponent(this.user_id)}`;
 
-        // url modify
-        const url = new URL(location.href);
+        // url param delete
         url.searchParams.delete('uid');
         history.pushState({}, '', url);
 
         this.closeModal();
+      } else {
+        alert("フォルダの確認失敗。権限を見直して下さい");
       }
     },
     closeModal(e) {
