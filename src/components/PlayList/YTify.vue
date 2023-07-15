@@ -54,15 +54,15 @@ export default {
     const url_params = (new URL(location.href)).searchParams;
     this.user_id = url_params.get("uid") || "";
 
-    if (url_params.has("uid")) {
+    if (url_params.has("uid")) { // user_id given
       const response = await axios.get("./api/check_user", { params: {user_id: this.user_id} });
 
-      if (response.data.status == "ok") {
+      if (response.data.status == "ok") { // exists in DBV
         document.cookie = `user_id=${encodeURIComponent(this.user_id)}`;
-      } else {
+      } else { // newly create
         this.$vfm.show('addUserModal');
       }
-    } else {
+    } else { //  not given. lookfor cookie
       // from cookie
       for (let kv of document.cookie.split(/;\s+/)) {
         const [k, v] = kv.split("=");
@@ -71,6 +71,7 @@ export default {
           const response = await axios.get("./api/check_user", { params: {user_id: v} });
           if (response.data.status == "ok") {
             this.user_id = v;
+            console.log(`User ${this.user_id}`);
           } else {
             this.user_id = "";
           }
