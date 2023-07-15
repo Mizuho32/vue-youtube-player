@@ -89,7 +89,7 @@ export default {
       this.showModal = false;
 
       if (!this.authed) {
-        this.user_id = "";
+        this.ytify.$data.user_id = "";
       }
     } //close
   }
