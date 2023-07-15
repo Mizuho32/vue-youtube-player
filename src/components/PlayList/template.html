@@ -29,6 +29,13 @@
                 Search
               </a>
             </li>
+            <li class="text-left mb-2">
+              <a class="text-secondary" @click="backup">
+                <i class="material-icons">add_to_drive</i>
+                Backup
+                <i class="fas fa-spinner fa-spin ml-2" v-if="backuping"></i>
+              </a>
+            </li>
           </ul>
           <ul class="list-group">
             <hr class="border-secondary w-100" style="opacity:0.2">

@@ -39,6 +39,10 @@ export default {
         search: {musicType: "search_result", albumIndex: 0, currentIndex: 0},
       },
       playlist2attach: "main",
+
+
+      //for UI
+      backuping: false,
     };
   },
   components: {
@@ -167,6 +171,26 @@ export default {
   },
 
   methods: {
+    async backup() { // drive
+      let save_name = prompt("名前を入力。空の場合時刻で名前付け");
+      if (save_name == null) return;
+
+      this.backuping = true;
+
+      save_name = save_name || (new Date()).toISOString();
+
+      console.log(save_name);
+      const response = await this.axios.post('./api/backup', {user_id: this.user_id, save_name: save_name});
+
+      this.backuping = false;
+      console.log(response.data);
+
+      if (response.data.status == "ok") {
+        alert(`バックアップ完了\n${response.data.msg}`);
+      } else {
+        alert(`エラー\n${response.data.msg}`);
+      }
+    },
     checkPopovers($event) {
       if ($event.target.nodeName !== "I") {
         this.currentPopoverIndex = -1;
