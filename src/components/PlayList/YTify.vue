@@ -51,7 +51,8 @@ export default {
     ModalAddUser,
   },
   async created() {
-    const url_params = (new URL(location.href)).searchParams;
+    const url = new URL(location.href);
+    const url_params = url.searchParams;
     this.user_id = url_params.get("uid") || "";
 
     if (url_params.has("uid")) { // user_id given
@@ -59,9 +60,13 @@ export default {
 
       if (response.data.status == "ok") { // exists in DBV
         document.cookie = `user_id=${encodeURIComponent(this.user_id)}`;
+        // url param delete
+        url.searchParams.delete('uid');
+        history.pushState({}, '', url);
       } else { // newly create
         this.$vfm.show('addUserModal');
       }
+
     } else { //  not given. lookfor cookie
       // from cookie
       for (let kv of document.cookie.split(/;\s+/)) {
@@ -71,13 +76,13 @@ export default {
           const response = await axios.get("./api/check_user", { params: {user_id: v} });
           if (response.data.status == "ok") {
             this.user_id = v;
-            console.log(`User ${this.user_id}`);
           } else {
             this.user_id = "";
           }
         }
       }
-    }
+    } // end if
+    console.log(`Wellcome '${this.user_id}'`);
 
     let vm = this;
     await this.loadPlaylist(vm, axios, "./api/preset");
