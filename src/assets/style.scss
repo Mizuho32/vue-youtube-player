@@ -139,8 +139,13 @@ ul {
 
 .material-icons {
   cursor: pointer;
-  font-size: 1.25rem;
+  //font-size: 1.25rem;
 }
+
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
 
 .icon-font-large {
   font-size: 1.5rem;
@@ -167,3 +172,8 @@ ul {
   justify-content: center;
 
 }
+
+input.form-control {
+  height: unset !important;
+}
+
