@@ -100,7 +100,7 @@ export default {
     console.log(this.playList);
 
     vm.init({});
-    vm.player.ytplayer.setVolume(100);
+    vm.player.ytplayer.setVolume(vm.player.volume);
   },
   mounted() {
     this.$nextTick(() => {

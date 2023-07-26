@@ -41,7 +41,7 @@ export default {
       processInterval: null,
       publicPath: "./",
       timeLine: 0,
-      volume: 30,
+      volume: 50,
       videoId: undefined
     };
   },
