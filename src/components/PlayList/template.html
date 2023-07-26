@@ -150,5 +150,31 @@
   </div>
   </div>
   <ModalAddUser />
+<footer>
   <Player ref="player" :playList="playList" :playlist_datas="playlist_datas" :playlist2attach="playlist2attach"></Player>
+  <div v-if="tallmode" class="d-flex flex-row justify-content-around bg-secondary-dark">
+    <div class="text-left mb-2 mt-2">
+      <span class="text-secondary" @click="navbar='Home'" :class="{'text-success':navbar==='Home'}">
+        <i class="material-icons md-36">home</i>
+      </span>
+    </div>
+    <div class="text-left mb-2 mt-2">
+      <a class="text-secondary" @click="navbar='Playlist',playListStatus='OVERVIEW'"
+        :class="{'text-success':navbar==='Playlist'}">
+        <i class="material-icons md-36">list</i>
+      </a>
+    </div>
+    <div class="text-left mb-2 mt-2">
+      <a class="text-secondary" @click="navbar='Search'" :class="{'text-success':navbar==='Search'}">
+        <i class="material-icons md-36">search</i>
+      </a>
+    </div>
+    <div class="text-left mb-2 mt-2">
+      <a class="text-secondary" @click="backup">
+        <i class="material-icons md-36">add_to_drive</i>
+        <i class="fas fa-spinner fa-spin ml-2" v-if="backuping"></i>
+      </a>
+    </div>
+  </div>
+</footer>
 </div>

@@ -400,7 +400,7 @@ export default {
 };
 </script>
 <template>
-<footer>
+<div>
   <div class="h-0">
     <youtube :video-id="videoId" loop="isLoop" autoplay="isAutoPlay" ref="youtube" class="youtube" @ended="loopSong"
       @playing="updateDuration" @paused="paused"  @ready="ready" />
@@ -483,7 +483,7 @@ export default {
       </div>
     </div>
   </div>
-</footer>
+</div>
 </template>
 
 
