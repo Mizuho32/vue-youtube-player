@@ -8,9 +8,9 @@
 @import "./helpers/components/_inputRange";
 @import "./helpers/components/_button";
 
-body{
-  //user-select: none;
-  //height: 100%; // for style update
+html, body{
+  user-select: none;
+  height: 100vh; // for style update
 }
 
 #app {
@@ -19,7 +19,7 @@ body{
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  //height: 100%; // for style update
+  height: 100%; // for style update
 }
 
 a {
