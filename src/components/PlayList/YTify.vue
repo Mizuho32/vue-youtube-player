@@ -43,6 +43,7 @@ export default {
 
       //for UI
       backuping: false,
+      tallmode: window.innerHeight > window.innerWidth,
     };
   },
   components: {
@@ -102,6 +103,12 @@ export default {
     vm.player.ytplayer.setVolume(100);
   },
   mounted() {
+    this.$nextTick(() => {
+      window.addEventListener('resize', this.onResize);
+    })
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.onResize);
   },
   watch: {
     navbar() {
@@ -224,6 +231,13 @@ export default {
         item.followers = (follower - 1).toLocaleString("en-us");
       }
     },
+    onResize() {
+      if (window.innerHeight > window.innerWidth) { //tall
+        this.tallmode = true;
+      } else {
+        this.tallmode = false;
+      }
+    },
     selectSinger({ item, index }) {
       if ( item.id === this.playList[this.musicType][this.albumIndex].id && this.isPlay ) return;
 
@@ -238,6 +252,7 @@ export default {
 
       this.$nextTick(function() {
         this.player.autoPlay();
+        this.navbar = "Playlist";
       });
     },
   }
