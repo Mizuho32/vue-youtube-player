@@ -134,6 +134,9 @@ export default {
     ytplayer() {
       return this.$refs.youtube.player;
     },
+    ytify() {
+      return this.$root.$children[0].$children[0];
+    },
   },
   filters: {
     formatTime(time) {
@@ -463,7 +466,7 @@ export default {
               </div>
             </div>
           </div>
-          <div class="col-md-2 my-auto">
+          <div class="col-md-2 my-auto" v-if="!ytify.$data.tallmode">
             <div class="d-flex justify-content-end align-items-center">
               <div @click="changeUnMute">
                 <i class="material-icons text-secondary icon-font-large mr-2 pb-2"
