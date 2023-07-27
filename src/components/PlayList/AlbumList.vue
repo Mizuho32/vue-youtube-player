@@ -5,25 +5,17 @@
         <h3 class="h3 font-weight-bold text-white text-left mb-3">
           {{ type }}
         </h3>
-        <div
-          class="d-inline-flex mb-4 float-md-left mr-4"
-          v-for="(item, index) in playList[type]"
-          :key="item.id"
-        >
-          <div
-            class="d-flex flex-column justify-content-center align-items-center"
-          >
-            <div
-              class="img-singer-thumb img-cover"
-              :style="`background-image: url(${publicPath}${item.img})`"
-              @click="selectHandler(item, index)"
-            ></div>
-            <small
-              class="text-white mt-3 text-center"
-              style="width:200px;height:40px"
-              >{{ item.album }}</small
-            >
+        <div class="d-flex flex-wrap justify-content-start">
+        <div class="album-item mb-0 float-md-left mr-2" v-for="(item, index) in playList[type]"
+             :key="item.id">
+          <div class="d-flex flex-column justify-content-center align-items-center">
+            <div class="img-singer-thumb img-cover"
+                 :style="`background-image: url(${publicPath}${item.img})`"
+                 @click="selectHandler(item, index)">
+            </div>
+            <small class="text-singer text-white mt-3 text-center">{{ item.album }}</small>
           </div>
+        </div>
         </div>
       </li>
     </ul>
