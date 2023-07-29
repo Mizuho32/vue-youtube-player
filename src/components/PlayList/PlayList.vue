@@ -100,9 +100,14 @@ export default {
     },
   },
   computed: {
+    currentAlbum() {
+      const data  = this.playlist_datas[this.name];
+      const album = this.playList?.[data["musicType"]]?.[data["albumIndex"]]
+
+      return album;
+    },
     currentPlayList() {
-      const data = this.playlist_datas[this.name];
-      const songs = this.playList?.[data["musicType"]]?.[data["albumIndex"]]?.songs
+      const songs = this.currentAlbum?.songs;
 
       return songs || [];
     },
