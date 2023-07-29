@@ -11,7 +11,7 @@
     <div class="input-group-prepend" v-if="is_edit_mode">
       <button class="btn btn-danger material-icons ml-2" @click="deleteSong">delete</button>
     </div>
-    <input class="form-control font-weight-bold text-center" type="text" v-model="get_currentAlbum().album"
+    <input class="form-control font-weight-bold text-center" type="text" v-model="get_currentAlbum().name"
     :readonly="!is_edit_mode">
     <div class="input-group-append">
       <button class="btn btn-success material-icons" data-toggle="button" aria-pressed="false"
@@ -157,7 +157,7 @@ export default {
       if (musicType != "user") return;
 
       let album = this.playList[musicType][albumIndex];
-      console.log("DELETE LIST", album.album, album.id)
+      console.log("DELETE LIST", album.name, album.id)
 
       // delete from DB
       const user_id = this.ytify.$data.user_id;

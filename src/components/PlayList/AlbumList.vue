@@ -13,7 +13,7 @@
                  :style="`background-image: url(${publicPath}${item.img})`"
                  @click="selectHandler(item, index)">
             </div>
-            <small class="text-singer text-white mt-3 text-center">{{ item.album }}</small>
+            <small class="text-singer text-white mt-3 text-center">{{ item.name }}</small>
           </div>
         </div>
         </div>

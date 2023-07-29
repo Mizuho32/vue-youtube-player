@@ -423,7 +423,7 @@ export default {
                     <p> by </p>
                     <span class="text-secondary">{{currentSinger}}</span>
                   </div>
-                  <span class="text-secondary" >{{currentAlbum.album}}</span>
+                  <span class="text-secondary" >{{currentAlbum.name}}</span>
                 </div>
               </div>
               <!-- PlayListController -->

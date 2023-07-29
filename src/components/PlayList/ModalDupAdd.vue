@@ -69,7 +69,7 @@ export default {
   },
   computed: {
     user_albums(){
-      return this.playList.user.map( (al)=>{return {name: al.album, id: al.id, checked: false};} );
+      return this.playList.user.map( (al)=>{return {name: al.name, id: al.id, checked: false};} );
     },
     albums() {
       return this.created_albums.concat(this.user_albums);
@@ -99,7 +99,7 @@ export default {
       const check_albums = this.user_albums.filter(ua=>ua.checked).map(ua => uuid2album[ua.id]);
       const wrongs = await this.checkVersion(this, this.axios, this.ytify.$data.user_id, check_albums);
       if (wrongs.length > 0) {
-        const inconsists = wrongs.map(({al, ver}) => al.album).join("\n"); // names
+        const inconsists = wrongs.map(({al, ver}) => al.name).join("\n"); // names
         alert(`以下のプレイリストとDBが不整合\n${inconsists}`);
         return false;
       }
