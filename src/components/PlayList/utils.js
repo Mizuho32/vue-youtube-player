@@ -1,3 +1,5 @@
+import BigAlbum from './bigalbum'
+
 export default {
 	computed:{
 	},
@@ -20,7 +22,9 @@ export default {
       const response = await this.axios.get(path, params);
 
       for (let [k,v] of Object.entries(response.data)) {
-        vm.$set(vm.playList, k, v);
+
+        vm.$set(vm.playList, k,
+          v.map(album => new BigAlbum({...album, ...{load_size: 100, show_size: 50, increment_size: 20}})));
         for (let album of v) {
           const ver = album.version;
           vm.$set(album, "version", ver ? new Date(ver) : undefined);

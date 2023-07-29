@@ -97,7 +97,9 @@ export default {
       await this.loadPlaylist(vm, axios, "./api/user", { params });
     }
 
-    console.log(this.playList);
+    //console.log(this.playList);
+    //console.log("created", this.currentAlbum);
+    await this.currentAlbum.init_songs();
 
     vm.init({});
     vm.player.ytplayer.setVolume(vm.player.volume);
@@ -134,6 +136,12 @@ export default {
     },
     currentPlayListData() {
       return this.playlist_datas[this.playlist2attach];
+    },
+    currentAlbum() {
+      const data = this.currentPlayListData;
+      const album = this.playList?.[data["musicType"]]?.[data["albumIndex"]];
+
+      return album;
     },
     currentIndex() {
       let data = this.playlist_datas[this.playlist2attach];
@@ -238,12 +246,13 @@ export default {
         this.tallmode = false;
       }
     },
-    selectSinger({ item, index }) {
+    async selectSinger({ item, index }) {
       if ( item.id === this.playList[this.musicType][this.albumIndex].id && this.isPlay ) return;
 
       //this.albumIndex = index;
       this.playlist2attach = "main";
       this.init({playlist_name: this.playlist2attach, musicType: item.type, albumIndex: index, autoplay: true});
+      await this.currentAlbum.init_songs();
       console.log("selectSinger, p2a is ", this.playlist2attach);
 
       /*if (this.musicType === "Daily Mix") {
