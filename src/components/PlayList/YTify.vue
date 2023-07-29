@@ -14,6 +14,7 @@ import utils from './utils'
 
 Vue.mixin(utils)
 Vue.use(VueAxios, axios);
+
 export default {
   name: "YTify",
   data() {
@@ -103,6 +104,20 @@ export default {
 
     vm.init({});
     vm.player.ytplayer.setVolume(vm.player.volume);
+
+    document.querySelector("div.playlist").addEventListener('scroll', event => {
+      const {scrollHeight, scrollTop, clientHeight} = event.target;
+
+      if (Math.abs(scrollHeight - clientHeight - scrollTop) < 1) {
+        if (this.navbar == "Playlist") {
+          this.currentAlbum.incremental_load();
+        }
+      } else if (scrollTop < 1) {
+        if (this.navbar == "Playlist") {
+          this.currentAlbum.incremental_load(false);
+        }
+      }
+    });
   },
   mounted() {
     this.$nextTick(() => {
