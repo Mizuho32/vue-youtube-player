@@ -132,41 +132,19 @@ export default {
         return;
       }
 
-      ///// Index calculation ////
-      // FIXME: should be replaced by enhanced album system
+      ///// Add album front size ////
       const songs_added_uuids = response.data.return;
       // for existing user playlists
       const uuid2idx = Object.fromEntries(this.user_albums.map((album, idx) => [album.id, idx]));
 
       Object.keys(songs_added_uuids).forEach(uuid => {
-        /*const obj = songs_added_uuids[uuid]
-        let next_index = obj.next_index;
-        const fails = obj.fails;*/
-
         const album_index = uuid2idx[uuid];
-        //let album2add = undefined;
 
         if (album_index >= 0) {
-          //album2add = this.playList.user[album_index];
         } else {
           const album2add = this.newAlbum(this.ytify, this.new_album(id2name[uuid], uuid, []));
           this.playList.user.push(album2add);
         }
-        //album2add.version = new Date(obj.version);
-        //console.log("create ver", album2add.version);
-
-        /*this.songs2add.forEach( (song2add, idx) => {
-          let copied = { ...song2add }; //FIXME: checked is also copied
-
-          if (fails[0] != idx) {
-            copied.index = next_index++;
-            console.log(copied.index, copied);
-            album2add.songs.push(copied);
-          } else {
-            fails.splice(0, 1); // remove first
-          }
-        });*/
-
       });
 
       this.created_albums = [{...item_tmpl}];

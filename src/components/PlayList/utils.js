@@ -29,10 +29,6 @@ export default {
         vm.$set(vm.playList, k,
           v.map(album => this.newAlbum(vm, album)));
           //v.map(album => new BigAlbum({...album, ...{load_size: 100, show_size: 50, increment_size: 20}})));
-        //for (let album of v) {
-        //  const ver = album.version;
-        //  vm.$set(album, "version", ver ? new Date(ver) : undefined);
-        //}
       }
     }, //
     // album should has id, version
