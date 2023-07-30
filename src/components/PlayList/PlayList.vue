@@ -45,7 +45,7 @@
         :isBuffering="isBuffering" :currentIndex="currentIndex" @selectSong="selectSong" @showPopovers="showPopovers" v-if="item.song" class="flex-fill">
       <a class="position-absolute pop text-white"
          :href="`https://www.youtube.com/watch?v=${item.videoId}&t=${item.start}`" target="_blank"
-          style="top: 24px;left: -40px;" v-show="currentPopoverIndex === index" v-if="ytify.$data.user_id">Youtube
+          style="top: 24px;left: -40px;" v-show="currentPopoverIndex === (item.index || index)" v-if="ytify.$data.user_id">Youtube
         </a>
       </PlayListItem>
     </div>
@@ -116,8 +116,7 @@ export default {
       return false;
     },
     currentIndex() {
-      let data = this.playlist_datas[this.name];
-      return data.currentIndex;
+      return this.ytify.currentIndex;
     },
     is_edit_mode() {
       return this.playlist_datas[this.name].edit_mode;
