@@ -108,12 +108,10 @@ export default {
     document.querySelector("div.playlist").addEventListener('scroll', event => {
       const {scrollHeight, scrollTop, clientHeight} = event.target;
 
-      if (Math.abs(scrollHeight - clientHeight - scrollTop) < 1) {
-        if (this.navbar == "Playlist") {
+      if (this.navbar == "Playlist" && !this.currentPlayListData.edit_mode) {
+        if (Math.abs(scrollHeight - clientHeight - scrollTop) < 1) {
           this.currentAlbum.incremental_load();
-        }
-      } else if (scrollTop < 1) {
-        if (this.navbar == "Playlist") {
+        } else if (scrollTop < 1) {
           this.currentAlbum.incremental_load(false);
         }
       }

@@ -8,11 +8,11 @@
   </div>
 
   <div class="input-group">
-    <div class="input-group-prepend" v-if="is_edit_mode">
+    <div class="input-group-prepend" v-if="is_edit_mode && !is_preset">
       <button class="btn btn-danger material-icons ml-2" @click="deleteSong">delete</button>
     </div>
     <input class="form-control font-weight-bold text-center" type="text" v-model="get_currentAlbum().name"
-    :readonly="!is_edit_mode">
+    :readonly="!is_edit_mode || is_preset">
     <div class="input-group-append">
       <button class="btn btn-success material-icons" data-toggle="button" aria-pressed="false"
         autocomplete="off" @click="edit_list">edit</button>
@@ -22,7 +22,7 @@
   <button class="btn btn-success material-icons" @click="dupAddList">content_copy</button>
   </div>
   <div>
-    <button class="btn btn-danger mt-2" @click="deleteList" v-if="is_edit_mode">
+    <button class="btn btn-danger mt-2" @click="deleteList" v-if="is_edit_mode && !is_preset">
       <span>Delete List</span>
       <i class="material-icons">delete_forever</i>
     </button>
@@ -74,6 +74,7 @@ export default {
       dl_list_csv: "",
       dl_list_href: "",
       dl_list_name: "リストのダウンロード",
+      is_preset: true,
       /*
       Album: undefined,
       AlbumImg: "",
@@ -91,6 +92,8 @@ export default {
     this.playListData = this.playlist_datas[this.name];
   },
   mounted: function () {
+    this.pl_container = document.querySelector("div.playlist");
+    this.is_preset = this.get_currentAlbum()?.type == "preset";
   },
   watch: {
     all_check() {
@@ -288,12 +291,6 @@ export default {
       this.dl_list_href = encodedUri;
     },
     edit_list() {
-      let pl_type = this.get_currentAlbum()?.type;
-      if (pl_type == "preset") {
-        alert("presetは編集できません");
-        return;
-      }
-
       if (!this.is_edit_mode) {
         for (let item of this.currentPlayList){
           this.$set(item, "checked", false);
