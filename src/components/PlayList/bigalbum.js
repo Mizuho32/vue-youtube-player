@@ -1,4 +1,5 @@
 import axios from "axios";
+import utils from "./utils.js";
 
 export default class BigAlbum {
   #load_songs;
@@ -11,12 +12,14 @@ export default class BigAlbum {
     this.type          = type;
     this.img           = img;
     this.backgroundImg = backgroundImg;
-    this.version       = version;
+    this.version       = version ? new Date(version) : undefined;
     this.album_size    = size;
     this.load_size     = load_size;
     this.show_size     = show_size;
     this.increment_size= increment_size;
 
+    this.load_size   = load_size;
+    this.songs_size  = show_size;
     this.load_range  = [0, load_size];
     this.songs_range = [0, show_size];
     this.#load_songs = []
@@ -30,10 +33,32 @@ export default class BigAlbum {
   }
 
   async init_songs() {
-    if (this.id && !this.#load_songs.length) {
-      this.#load_songs = await this.range_get(this.load_range);
-      this.songs = this.slice_songs();
-      this.set_currentSongInfo();
+    if (this.id) {
+      this.ytify().$data.listloading = true;
+      const chk = await utils.methods.checkVersion(axios, this.ytify().$data.user_id, [this]);
+      const updated = chk.length;
+
+      if (!this.#load_songs.length || updated) {
+
+        if (updated)  {
+           // start idx of load s.t. end is in [0, album_size]
+          let start = Math.min(this.index, this.album_size-this.load_size);
+          start = Math.max(0, start);
+          this.load_range = [start, start+this.load_size];
+        }
+
+        this.#load_songs = await this.range_get(this.load_range);
+        this.songs = this.slice_songs();
+        console.log("init album", this.load_range, this.songs_range);
+        this.set_currentSongInfo();
+
+        // false after 2sec
+        utils.methods.waitUntil(()=>{
+          this.ytify().$data.listloading = false;
+          return false;
+        }, 2, 2);
+      }
+
     }
   }
 

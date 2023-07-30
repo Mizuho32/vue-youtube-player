@@ -22,6 +22,7 @@
                 :class="{'text-success':navbar==='Playlist'}">
                 <i class="material-icons">list</i>
                 Playlist
+                <i class="fas fa-spinner fa-spin ml-2" v-if="listloading"></i>
               </a>
             </li>
             <li class="text-left mb-2">
