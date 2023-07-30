@@ -128,17 +128,8 @@ export default {
   },
   methods: {
     init(videoId = undefined) {
-      //this.playList = playList;
       console.log(`player init to ${this.playlist2attach}`, this.currentSong);
       this.changeVideo(videoId || this.currentSongInfo?.videoId || "");
-
-      //this.currentAlbum = item;
-      //this.currentSong = item.songs[this.currentIndex].song;
-      //this.currentSongInfo = item.songs[this.currentIndex];
-      //this.currentPlayList = item.songs || [];
-      //this.currentAlbumImg = item.img;
-      //this.currentSinger = item.singer;
-      //this.musicType = item.type;
     },
     ready() {
       // seek to the time (autoPlay) after video load finished
