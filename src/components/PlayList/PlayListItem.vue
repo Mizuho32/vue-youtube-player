@@ -4,7 +4,8 @@
       class="list-group-item pb-0 border-0 mb-2 bg-transparent rounded-0 text-left d-flex justify-content-between align-items-center"
     >
       <div class="text-white d-flex align-items-center">
-        <small class="text-secondary">#{{ index + 1 }}</small>
+        <small class="text-primary" v-if="(index+1)%5==0">#{{ index + 1 }}</small>
+        <small class="text-secondary" v-else>#{{ index + 1 }}</small>
         <div>
           <div
             class="nav-link text-white d-flex flex-column"
