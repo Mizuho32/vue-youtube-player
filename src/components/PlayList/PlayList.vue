@@ -39,7 +39,7 @@
       <a class="btn btn-success material-icons" :href="dl_list_href" :download="dl_list_name">save_alt</a>
       <textarea :value="dl_list_csv" style="width: 100%; height:50vh;"></textarea>
     </div>
-    <div v-for="(item,index) in currentPlayList" :key="`${index}-${item.song}`" class="d-flex justify-content-start" v-else>
+    <div v-for="(item,index) in currentPlayList" :key="`${index}-${item.song}`" class="item d-flex justify-content-start" v-else>
       <input type="checkbox" v-if="is_edit_mode" v-model="item.checked"/>
       <PlayListItem :item="item" :index="item.index || index"
         :isBuffering="isBuffering" :currentIndex="currentIndex" @selectSong="selectSong" @showPopovers="showPopovers" v-if="item.song" class="flex-fill">
@@ -129,6 +129,15 @@ export default {
     },
   },
   methods: {
+    scrollNItems(num) { // + append, - prepend
+      const sample = document.querySelector("div.item");
+      const height = sample?.clientHeight || 0;
+
+      this.pl_container.scrollTo({
+        top: this.pl_container.scrollTop - num*height, // scroll up when append
+        behavior: 'smooth'
+      });
+    },
     async checkConsist() {
       let album = this.get_currentAlbum();
       // empty or search_result

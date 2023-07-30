@@ -45,12 +45,19 @@ export default class BigAlbum {
       let new_song_range = [start + delta, end + delta];
 
       await this.incremental_get(new_song_range);
+
       this.songs_range = new_song_range;
       this.songs = this.slice_songs();
+
+      this.ytify().playlist.scrollNItems(delta);
 
       //console.log("lr", this.load_range, this.load_range[1]-this.load_range[0], this.#load_songs.length);
       //console.log("this.songs", this.songs, this.songs.length);
     }
+  }
+
+  ytify() {
+    return this.vm.$root.$children[0].$children[0];
   }
 
   slice_songs() {
