@@ -163,6 +163,7 @@
       <a class="text-secondary" @click="navbar='Playlist',playListStatus='OVERVIEW'"
         :class="{'text-success':navbar==='Playlist'}">
         <i class="material-icons md-36">list</i>
+        <i class="fas fa-spinner fa-spin ml-2" v-if="listloading"></i>
       </a>
     </div>
     <div class="text-left mb-2 mt-2">
