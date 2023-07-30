@@ -159,30 +159,20 @@ export default {
       return album;
     },
     currentIndex() {
-      let data = this.playlist_datas[this.playlist2attach];
-      return data["currentIndex"];
+      return this.currentAlbum?.index || 0;
     },
     currentSinger() {
-      const data = this.currentPlayListData;
-      const singer = this.playList?.[data["musicType"]]?.[data["albumIndex"]]?.singer
+      const singer = this.currentAlbum?.singer;
 
       if (singer)
         return singer;
       return "-";
     },
     currentSong() {
-      let data = this.playlist_datas[this.playlist2attach];
-
-      if (this.playList[data["musicType"]])
-        return this.playList[data["musicType"]][data["albumIndex"]].songs[data["currentIndex"]].song;
-      return "";
+      return this.currentSongInfo?.song || "";
     },
     currentSongInfo() {
-      let data = this.playlist_datas[this.playlist2attach];
-
-      if (this.playList[data["musicType"]])
-        return this.playList[data["musicType"]][data["albumIndex"]].songs[data["currentIndex"]];
-      return {};
+      return this.currentAlbum?.currentSongInfo || {};
     },
     videoId() {
       return this.currentSongInfo?.videoId || "";

@@ -86,50 +86,29 @@ export default {
     }
   },
   computed: {
-    currentPlayListData() {
-      return this.playlist_datas[this.playlist2attach];
-    },
     currentAlbum() {
-      let data = this.playlist_datas[this.playlist2attach];
-      const album = this.playList?.[data["musicType"]]?.[data["albumIndex"]];
-
-      if (album) return album;
-      return {};
+      return this.ytify.currentAlbum;
     },
     currentAlbumImg() {
-      let data = this.playlist_datas[this.playlist2attach];
-      const img_path = this.playList?.[data["musicType"]]?.[data["albumIndex"]]?.img
-
-      if (img_path) return img_path;
-      return "";
+      return this.currentAlbum?.img || "";
+    },
+    currentAlbumName() {
+      return this.currentAlbum?.name || "-";
     },
     currentIndex() {
-      let data = this.playlist_datas[this.playlist2attach];
-      return data["currentIndex"];
+      return this.currentAlbum?.index || 0;
     },
     currentSongInfo() {
-      let data = this.playlist_datas[this.playlist2attach];
-      const song_info = this.playList?.[data["musicType"]]?.[data["albumIndex"]]?.songs?.[data["currentIndex"]]
-
-      return song_info || {};
+      return this.ytify.currentSongInfo;
     },
     currentSong() {
-      let data = this.playlist_datas[this.playlist2attach];
-      let cidx = data["currentIndex"];
-      const song_info = this.currentSongInfo;
-      const song = song_info?.song;
-
-      return song || "";
+      return this.ytify.currentSong;
     },
     currentSinger() {
-      const album = this.currentAlbum;
-
-      return album?.singer || "-";
+      return this.ytify.currentSinger;
     },
     musicType() {
-      const album = this.currentAlbum;
-
-      return album?.type;
+      return this.currentAlbum?.type;
     },
     ytplayer() {
       return this.$refs.youtube.player;
@@ -423,7 +402,7 @@ export default {
                     <p> by </p>
                     <span class="text-secondary">{{currentSinger}}</span>
                   </div>
-                  <span class="text-secondary" >{{currentAlbum.name}}</span>
+                  <span class="text-secondary" >{{currentAlbumName}}</span>
                 </div>
               </div>
               <!-- PlayListController -->
