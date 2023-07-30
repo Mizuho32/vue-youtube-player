@@ -46,7 +46,7 @@ export default {
 
       //for UI
       backuping: false,
-      listloading: true,
+      listloading: false,
       tallmode: window.innerHeight > window.innerWidth,
     };
   },

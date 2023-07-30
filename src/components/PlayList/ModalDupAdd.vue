@@ -85,7 +85,7 @@ export default {
   methods: {
     new_album(name, uuid, songs) {
       // FIXME: imgs
-      return {"album":name,"id":uuid,"singer":"Rin","type":"user","img":"/jpg/Rin/playlist_icon.jpg","backgroundImg":"/jpg/Rin/header.jpg", "songs": songs};
+      return {"name":name,"id":uuid,"singer":"Rin","type":"user","img":"/jpg/Rin/playlist_icon.jpg","backgroundImg":"/jpg/Rin/header.jpg", "songs": songs};
     },
 
     async make_albums() {
@@ -139,23 +139,23 @@ export default {
       const uuid2idx = Object.fromEntries(this.user_albums.map((album, idx) => [album.id, idx]));
 
       Object.keys(songs_added_uuids).forEach(uuid => {
-        const obj = songs_added_uuids[uuid]
+        /*const obj = songs_added_uuids[uuid]
         let next_index = obj.next_index;
-        const fails = obj.fails;
+        const fails = obj.fails;*/
 
         const album_index = uuid2idx[uuid];
-        let album2add = undefined;
+        //let album2add = undefined;
 
         if (album_index >= 0) {
-          album2add = this.playList.user[album_index];
+          //album2add = this.playList.user[album_index];
         } else {
-          album2add = this.new_album(id2name[uuid], uuid, []);
+          const album2add = this.newAlbum(this.ytify, this.new_album(id2name[uuid], uuid, []));
           this.playList.user.push(album2add);
         }
-        album2add.version = new Date(obj.version);
-        console.log("create ver", album2add.version);
+        //album2add.version = new Date(obj.version);
+        //console.log("create ver", album2add.version);
 
-        this.songs2add.forEach( (song2add, idx) => {
+        /*this.songs2add.forEach( (song2add, idx) => {
           let copied = { ...song2add }; //FIXME: checked is also copied
 
           if (fails[0] != idx) {
@@ -165,7 +165,7 @@ export default {
           } else {
             fails.splice(0, 1); // remove first
           }
-        });
+        });*/
 
       });
 

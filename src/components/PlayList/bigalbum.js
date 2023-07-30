@@ -34,14 +34,17 @@ export default class BigAlbum {
 
   async init_songs() {
     if (this.id) {
-      this.ytify().$data.listloading = true;
       const chk = await utils.methods.checkVersion(axios, this.ytify().$data.user_id, [this]);
       const updated = chk.length;
 
       if (!this.#load_songs.length || updated) {
+        this.ytify().$data.listloading = true;
 
         if (updated)  {
-           // start idx of load s.t. end is in [0, album_size]
+          // Get new size
+          await this.update();
+
+          // start idx of load s.t. end is in [0, album_size]
           let start = Math.min(this.index, this.album_size-this.load_size);
           start = Math.max(0, start);
           this.load_range = [start, start+this.load_size];
@@ -55,11 +58,23 @@ export default class BigAlbum {
         // false after 2sec
         utils.methods.waitUntil(()=>{
           this.ytify().$data.listloading = false;
-          return false;
-        }, 2, 2);
+          return true;
+        }, 2, 2000);
       }
 
     }
+  }
+
+  async update() {
+    // {user_id: "", list_ids:[""]}
+    const query = {user_id: this.ytify().$data.user_id, list_ids:[this.id]};
+    const ret = await axios.post("./api/albums", query);
+    const album = ret.data.return[this.id];
+    console.log("update", album);
+
+    this.name = album.name
+    this.version = new Date(album.version);
+    this.album_size = album.size;
   }
 
   async incremental_load(append = true) {
