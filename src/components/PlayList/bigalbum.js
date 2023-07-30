@@ -109,7 +109,7 @@ export default class BigAlbum {
       let inc_gotten = await this.range_get(inc_range);
       if (append) {
         this.#load_songs.push(...inc_gotten);
-        this.#load_songs.splice(0,inc_gotten.length);
+        this.#load_songs.splice(0, inc_gotten.length);
         this.load_range = this.load_range.map(elm=>elm + inc_gotten.length);
       } else {
         this.#load_songs.splice(0, 0, ...inc_gotten);
