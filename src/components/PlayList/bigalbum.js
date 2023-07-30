@@ -34,8 +34,13 @@ export default class BigAlbum {
 
   async init_songs() {
     if (this.id) {
-      const chk = await utils.methods.checkVersion(axios, this.ytify().$data.user_id, [this]);
-      const updated = chk.length;
+      const user_id = this.ytify().$data.user_id;
+      let updated = false;
+
+      if (user_id) { // when no user
+        const chk = await utils.methods.checkVersion(axios, user_id, [this]);
+         updated = chk.length;
+      }
 
       if (!this.#load_songs.length || updated) {
         this.ytify().$data.listloading = true;
