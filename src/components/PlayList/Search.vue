@@ -55,10 +55,11 @@ export default {
     },
     async search() {
       let response = await this.axios.post("./api/search", {query: this.album.searchQuery, song: this.search_song});
-      console.log(response.data);
+      console.log("search", response.data);
       for (let [k,v] of Object.entries(response.data["search_result"][0])) {
-        this.$set(this.playList.search_result[0], k, v);
+        this.$set(this.album, k, v);
       }
+      this.album.set_currentSongInfo();
     },
     change_type() {
       this.search_song = !this.search_song;

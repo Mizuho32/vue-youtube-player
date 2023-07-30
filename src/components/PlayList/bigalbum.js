@@ -3,7 +3,8 @@ import axios from "axios";
 export default class BigAlbum {
   #load_songs;
 
-  constructor({name, id, singer, type, img, backgroundImg, version, size, load_size, show_size, increment_size}) {
+  constructor({name, id, singer, type, img, backgroundImg, version, size, load_size, show_size, increment_size, vm,
+    songs = [], searchQuery = ""}) {
     this.name          = name;
     this.id            = id;
     this.singer        = singer;
@@ -19,13 +20,20 @@ export default class BigAlbum {
     this.load_range  = [0, load_size];
     this.songs_range = [0, show_size];
     this.#load_songs = []
-    this.songs = [];
+    this.songs = songs;
+
+    this.index = 0;
+    this.currentSongInfo = undefined;
+
+    this.vm = vm;
+    this.searchQuery = searchQuery;
   }
 
   async init_songs() {
-    if (!this.#load_songs.length) {
+    if (this.id && !this.#load_songs.length) {
       this.#load_songs = await this.range_get(this.load_range);
       this.songs = this.slice_songs();
+      this.set_currentSongInfo();
     }
   }
 
@@ -79,8 +87,10 @@ export default class BigAlbum {
     }
   }
 
-  // [start, end]
+  // [start, end)
   async range_get(range) {
+    if (!this.id) return;
+
       // {list_id: {indices:[], ranges:[[start,end],..]}}
       let query = {};
       query[this.id] = {ranges:[ [range[0], range[1]-1] ]};
@@ -93,7 +103,38 @@ export default class BigAlbum {
       return data.return[this.id];
   }
 
-  /*get songs() {
-    return this.#load_songs;
-  }*/
+  async setIndex(index) {
+    index = Math.min(this.album_size-1, Math.max(0, index)); // 0 <= index < size
+
+    let [min, max] = this.songs_range;
+    if (this.id && !(min <= index && index < max)) {
+      if (index == this.index + 1 && index >= max) {
+        await this.incremental_load(); // append
+      } else if (index == this.index - 1 && index < min) { // index < min
+        await this.incremental_load(false); // prepend
+      } else {
+        let next = await this.range_get([index, index+1]);
+        this.vm.$set(this, "currentSongInfo", next[0]);
+      }
+    }
+
+    this.vm.$set(this, "index", index);
+    this.set_currentSongInfo();
+  }
+
+  set_currentSongInfo() {
+    if (!this.id) {
+      this.vm.$set(this, "currentSongInfo", this.songs[this.index]);
+      return;
+    }
+
+    let [min, max] = this.load_range;
+    if (min <= this.index && this.index < max) {
+      this.vm.$set(this, "currentSongInfo", this.#load_songs[this.index - min]);
+    }
+  }
+
+  set size(size) {
+    this.album_size = size;
+  }
 }

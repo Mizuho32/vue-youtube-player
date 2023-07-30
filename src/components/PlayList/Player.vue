@@ -167,8 +167,8 @@ export default {
         }
       }
     },
-    changeIndexAndVideo(index) {
-      this.currentPlayListData.currentIndex = index;
+    async changeIndexAndVideo(index) {
+      await this.currentAlbum.setIndex(index);
       this.changeVideo(this.currentSongInfo.videoId);
     },
     changeVideo(id) {
@@ -176,7 +176,7 @@ export default {
       this.videoId = id;
       this.isLoaded = false;
     },
-    changeSong(click) {
+    async changeSong(click) {
       this.stopUpdateDuration();
       this.pausePlay();
       this.currentTime = 0;
@@ -184,12 +184,11 @@ export default {
       let album = this.currentAlbum;
 
       // 上一首或下一首
-      let total = album.songs.length;
+      let total = album.album_size;
       if (total <= 1) return;
 
-      let cindex = this.currentPlayListData.currentIndex
-      //this.currentPlayListData.currentIndex = (cindex + click + total) % total;
-      this.changeIndexAndVideo((cindex + click + total) % total);
+      let cindex = this.currentAlbum.index;
+      await this.changeIndexAndVideo((cindex + click + total) % total);
 
       let vm = this;
       this.$nextTick(function() {
@@ -246,7 +245,7 @@ export default {
       let zero = this.currentSongInfo.start || 0;
       this.ytplayer.seekTo(zero);
     },
-    loopSong() {
+    async loopSong() {
       if (this.isLoop) {
         this.loopCurrentSong();
       } else { // called when playing ended
@@ -256,7 +255,7 @@ export default {
             this.ytplayer.pauseVideo();
 
         let album = this.currentAlbum;
-        let total = album.songs.length;
+        let total = album.album_size;
 
         // 隨機撥放
         let suffleIndex = Math.floor(Math.random() * total);
@@ -269,8 +268,7 @@ export default {
         if (nextIndex === total) nextIndex = 0;
         console.log(`loopSong, nextidx ${nextIndex}`);
 
-        //this.reset(this.currentAlbum);
-        this.changeIndexAndVideo(nextIndex);
+        await this.changeIndexAndVideo(nextIndex);
         this.$nextTick(function() {
           this.autoPlay();
         });

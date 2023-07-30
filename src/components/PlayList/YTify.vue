@@ -11,6 +11,7 @@ import RelatedItem from "./RelatedItem";
 import ModalAddUser from "./ModalAddUser";
 
 import utils from './utils'
+import BigAlbum from './bigalbum'
 
 Vue.mixin(utils)
 Vue.use(VueAxios, axios);
@@ -31,7 +32,8 @@ export default {
       //musicType: undefined,
       navbar: "Playlist",
       playList: {user: [], preset: [], search_result: [
-        {album: "search", type: "search_result", songs:[], searchQuery: ""}] },
+        new BigAlbum({name: "search", type: "search_result", songs:[], searchQuery: "", vm: this})
+      ]},
       playListStatus: "OVERVIEW",
       publicPath: "./",
 
@@ -98,11 +100,9 @@ export default {
       await this.loadPlaylist(vm, axios, "./api/user", { params });
     }
 
-    //console.log(this.playList);
-    //console.log("created", this.currentAlbum);
-    await this.currentAlbum.init_songs();
+    //console.log("created", this.currentSongInfo);
 
-    vm.init({});
+    await vm.init({});
     vm.player.ytplayer.setVolume(vm.player.volume);
 
     document.querySelector("div.playlist").addEventListener('scroll', event => {
@@ -216,7 +216,7 @@ export default {
         this.currentPopoverIndex = -1;
       }
     },
-    init({playlist_name = "main", musicType = undefined, albumIndex = 0, currentIndex = 0, autoplay = false}) {
+    async init({playlist_name = "main", musicType = undefined, albumIndex = 0, currentIndex = 0, autoplay = false}) {
       console.log(`init ${playlist_name} to ${musicType}, ${albumIndex}`);
       this.player?.stopUpdateDuration();
       this.player?.pausePlay();
@@ -232,6 +232,9 @@ export default {
       let item = this.playList[this.musicType][this.albumIndex];
       this.currentBackGround = this.publicPath + item.backgroundImg;
       //console.log(`YT init to `, {pld: this.currentPlayListData});
+
+      await this.currentAlbum.init_songs();
+
       if (autoplay)
         this.player.init(this.videoId);
     },
@@ -256,8 +259,7 @@ export default {
 
       //this.albumIndex = index;
       this.playlist2attach = "main";
-      this.init({playlist_name: this.playlist2attach, musicType: item.type, albumIndex: index, autoplay: true});
-      await this.currentAlbum.init_songs();
+      await this.init({playlist_name: this.playlist2attach, musicType: item.type, albumIndex: index, autoplay: true});
       console.log("selectSinger, p2a is ", this.playlist2attach);
 
       /*if (this.musicType === "Daily Mix") {
