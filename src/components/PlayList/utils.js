@@ -4,6 +4,9 @@ export default {
 	computed:{
 	},
 	methods: {
+    newAlbum(vm, album) {
+      return new BigAlbum({...album, load_size: 30, show_size: 20, increment_size: 10, vm: vm});
+    },
 		waitUntil(cond, timeout = 10, delta = 100) { // sec, millisec
 			let tsum = 0;
 			return new Promise(resolve => {
@@ -24,11 +27,12 @@ export default {
       for (let [k,v] of Object.entries(response.data)) {
 
         vm.$set(vm.playList, k,
-          v.map(album => new BigAlbum({...album, ...{load_size: 100, show_size: 50, increment_size: 20}})));
-        for (let album of v) {
-          const ver = album.version;
-          vm.$set(album, "version", ver ? new Date(ver) : undefined);
-        }
+          v.map(album => this.newAlbum(vm, album)));
+          //v.map(album => new BigAlbum({...album, ...{load_size: 100, show_size: 50, increment_size: 20}})));
+        //for (let album of v) {
+        //  const ver = album.version;
+        //  vm.$set(album, "version", ver ? new Date(ver) : undefined);
+        //}
       }
     }, //
     // album should has id, version
