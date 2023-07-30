@@ -131,7 +131,7 @@ export default {
       // empty or search_result
       if (Object.keys(album).length == 0 || album?.type == "search_result") return true;
 
-      const wrongs = await this.checkVersion(this, this.axios, this.ytify.$data.user_id, [album]);
+      const wrongs = await this.checkVersion(this.axios, this.ytify.$data.user_id, [album]);
       if (wrongs.length > 0) {
         alert("DBとプレイリストバージョンが整合しません");
         return false;

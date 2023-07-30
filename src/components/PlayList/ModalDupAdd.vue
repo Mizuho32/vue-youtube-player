@@ -97,7 +97,7 @@ export default {
       // FIXME: consistency check
       const uuid2album = Object.fromEntries(this.playList.user.map((album, idx) => [album.id, album]));
       const check_albums = this.user_albums.filter(ua=>ua.checked).map(ua => uuid2album[ua.id]);
-      const wrongs = await this.checkVersion(this, this.axios, this.ytify.$data.user_id, check_albums);
+      const wrongs = await this.checkVersion(this.axios, this.ytify.$data.user_id, check_albums);
       if (wrongs.length > 0) {
         const inconsists = wrongs.map(({al, ver}) => al.name).join("\n"); // names
         alert(`以下のプレイリストとDBが不整合\n${inconsists}`);

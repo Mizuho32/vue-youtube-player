@@ -32,9 +32,9 @@ export default {
       }
     }, //
     // album should has id, version
-    async checkVersion(vm, axios, user_id, albums) { // albums -> inconsistent albums
+    async checkVersion(axios, user_id, albums) { // albums -> inconsistent albums
         const version_query = {user_id: user_id, list_ids: albums.map(al=>al.id)};
-        const response = await this.axios.post('./api/versions', version_query);
+        const response = await axios.post('./api/versions', version_query);
         const db_pl_versions = response.data.return.map(v=>new Date(v)); // versions
 
         console.log("check vers q, r, cur", version_query, db_pl_versions, albums.map(a=>a.version));
