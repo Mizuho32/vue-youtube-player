@@ -2,6 +2,7 @@
 import Vue from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
+import VueCookies from 'vue-cookies';
 import AlbumList from "./AlbumList";
 import Search from "./Search";
 import Player from "./Player";
@@ -15,6 +16,7 @@ import BigAlbum from './bigalbum'
 
 Vue.mixin(utils)
 Vue.use(VueAxios, axios);
+Vue.use(VueCookies)
 
 export default {
   name: "YTify",
@@ -68,7 +70,9 @@ export default {
       const response = await axios.get("./api/check_user", { params: {user_id: this.user_id} });
 
       if (response.data.status == "ok") { // exists in DBV
-        document.cookie = `user_id=${encodeURIComponent(this.user_id)}`;
+        this.$cookies.config(60 * 60 * 24 * 30, '');
+        this.$cookies.set('user_id', encodeURIComponent(this.user_id));
+
         // url param delete
         url.searchParams.delete('uid');
         history.pushState({}, '', url);
@@ -77,18 +81,12 @@ export default {
       }
 
     } else { //  not given. lookfor cookie
-      // from cookie
-      for (let kv of document.cookie.split(/;\s+/)) {
-        const [k, v] = kv.split("=");
-        v = decodeURIComponent(v);
-        if (k == "user_id") {
-          const response = await axios.get("./api/check_user", { params: {user_id: v} });
-          if (response.data.status == "ok") {
-            this.user_id = v;
-          } else {
-            this.user_id = "";
-          }
-        }
+      const uid = decodeURIComponent(this.$cookies.get('user_id'));
+      const response = await axios.get("./api/check_user", { params: {user_id: uid} });
+      if (response.data.status == "ok") {
+        this.user_id = uid;
+      } else {
+        this.user_id = "";
       }
     } // end if
     console.log(`Wellcome '${this.user_id}'`);
