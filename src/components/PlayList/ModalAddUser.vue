@@ -90,6 +90,9 @@ export default {
 
       if (!this.authed) {
         this.ytify.$data.user_id = "";
+        this.ytify.$data.icon = "lock";
+      } else {
+        this.ytify.$data.icon = "headset";
       }
     } //close
   }

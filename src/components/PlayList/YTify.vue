@@ -48,6 +48,7 @@ export default {
 
       //for UI
       backuping: false,
+      icon: "headset",
       listloading: false,
       tallmode: window.innerHeight > window.innerWidth,
     };
@@ -90,6 +91,7 @@ export default {
       }
     } // end if
     console.log(`Wellcome '${this.user_id}'`);
+    if (!this.user_id) this.icon = "lock";
 
     let vm = this;
     await this.loadPlaylist(vm, axios, "./api/preset");
