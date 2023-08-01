@@ -42,7 +42,11 @@ export default {
       publicPath: "./",
       timeLine: 0,
       volume: 50,
-      videoId: undefined
+      videoId: undefined,
+
+      playerVars: {
+        autoplay: 1
+      }
     };
   },
   components: {
@@ -110,8 +114,11 @@ export default {
     musicType() {
       return this.currentAlbum?.type;
     },
+    youtube() {
+      return this.$refs.youtube;
+    },
     ytplayer() {
-      return this.$refs.youtube.player;
+      return this.youtube.player;
     },
     ytify() {
       return this.$root.$children[0].$children[0];
@@ -165,6 +172,7 @@ export default {
     changeVideo(id) {
       if (this.videoId === id) return;
       this.videoId = id;
+      this.youtube.updatePlayer(id);
       this.isLoaded = false;
     },
     async changeSong(click) {
@@ -311,9 +319,9 @@ export default {
     },
 
     async startPlay() {
-      if (!this.videoId) {
+      if (!this.videoId) { // first time
         this.init();
-        this.autoPlay(true);
+        //this.autoPlay(true);
       }
 
       this.ytplayer.playVideo();
@@ -372,9 +380,9 @@ export default {
 </script>
 <template>
 <div>
-  <div class="h-0">
-    <youtube :video-id="videoId" loop="isLoop" autoplay="isAutoPlay" ref="youtube" class="youtube" @ended="loopSong"
-      @playing="updateDuration" @paused="paused"  @ready="ready" />
+  <div class="">
+    <youtube :player-vars="playerVars" ref="youtube" class="youtube"
+      @ended="loopSong" @playing="updateDuration" @paused="paused" @ready="ready" />
   </div>
   <div class="container-fluid">
     <div class="row">
