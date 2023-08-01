@@ -274,7 +274,10 @@ export default {
         // this.stopUpdateDuration(); // called in init()
       }
     },
+    // FIXME: should be improved
     async autoPlay(seekOnly = false) {
+      this.pausePlay(); // Wait load takes too much(?)
+
       let start = this.currentSongInfo.start
       let vm = this;
 
@@ -283,20 +286,25 @@ export default {
       // Wait load
       // await new Promise(resolve => setTimeout(resolve, 5000));
       let wait_loaded = await this.waitUntil(()=>this.isLoaded, 10);
+
       if (!wait_loaded) {
         alert("failed to load video");
         return
+      } else {
+        console.log("loaded");
       }
 
       // Seek
+      // FIXME: should see playerState? for when paused
+      this.ytplayer.playVideo();
       let check_seek = async ()=>{
-        await vm.ytplayer.seekTo(start); // return player
         let current_time = await vm.ytplayer.getCurrentTime();
 
         let msg = `seek to ${this.videoId} ${start} (player.getCurTime: ${current_time}, this.curTime: ${vm.currentTime})`;
         console.log(msg);
 
         if (Math.abs(current_time - start) <= 1.0) return true;
+        await vm.ytplayer.seekTo(start); // return player
         return false;
       };
       let sought = await this.waitUntil(check_seek, 5, 500);
@@ -313,7 +321,7 @@ export default {
       if (playerState == 1 || playerState == 3 || playerState == 5) this.isPlay = true;
 
 
-      if (seekOnly) return;
+      //if (seekOnly) return;
 
       vm.startPlay();
     },
@@ -324,7 +332,7 @@ export default {
         //this.autoPlay(true);
       }
 
-      this.ytplayer.playVideo();
+      await this.ytplayer.playVideo();
       await new Promise(resolve => setTimeout(resolve, 100));
 
       this.isPlay = true;
