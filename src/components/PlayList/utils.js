@@ -14,7 +14,7 @@ export default {
 					tsum += delta;
 
 					let condition = await cond();
-					if (await cond() || tsum > timeout*1000) { // OK or timeout
+					if (condition || tsum > timeout*1000) { // OK or timeout
 						clearInterval(interval);
 						resolve(condition); // return
 					}
