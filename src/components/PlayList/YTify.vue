@@ -51,6 +51,8 @@ export default {
       icon: "headset",
       listloading: false,
       tallmode: window.innerHeight > window.innerWidth,
+      debug_out: "",
+      debug_mode: false,
     };
   },
   components: {
@@ -65,6 +67,18 @@ export default {
   async created() {
     const url = new URL(location.href);
     const url_params = url.searchParams;
+
+    if (url_params.get("debug")) {
+      let _console = console;
+      this.debug_mode = true;
+      console.log("debug_mode", this.debug_mode);
+      console = {
+        log: (...args) => {
+          _console.log(...args);
+          this.debug_out += args.join(" ") + "\n";
+        }
+      };
+    }
     this.user_id = url_params.get("uid") || "";
 
     if (url_params.has("uid")) { // user_id given
