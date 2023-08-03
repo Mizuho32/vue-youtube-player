@@ -83,6 +83,9 @@ export default class BigAlbum {
   }
 
   async incremental_load(append = true) {
+    if (!this.lock) this.lock = true;
+    else return;
+
     let delta = this.increment_size * Math.pow(-1, Number(!append));
     let [start, end] = this.songs_range;
 
@@ -99,6 +102,9 @@ export default class BigAlbum {
       //console.log("lr", this.load_range, this.load_range[1]-this.load_range[0], this.#load_songs.length);
       //console.log("this.songs", this.songs, this.songs.length);
     }
+
+    await utils.methods.waitUntil( ()=>true, 0.5, 500);
+    this.lock = false;
   }
 
   ytify() {

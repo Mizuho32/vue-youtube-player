@@ -135,7 +135,7 @@ export default {
 
       this.pl_container.scrollTo({
         top: this.pl_container.scrollTop - num*height, // scroll up when append
-        behavior: 'smooth'
+        behavior: 'instant'
       });
     },
     async checkConsist() {

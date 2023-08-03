@@ -120,14 +120,14 @@ export default {
     await vm.init({});
     vm.player.ytplayer.setVolume(vm.player.volume);
 
-    document.querySelector("div.playlist").addEventListener('scroll', event => {
+    document.querySelector("div.playlist").addEventListener('scroll', async event => {
       const {scrollHeight, scrollTop, clientHeight} = event.target;
 
       if (this.navbar == "Playlist" && !this.currentPlayListData.edit_mode) {
         if (Math.abs(scrollHeight - clientHeight - scrollTop) < 1) {
-          this.currentAlbum.incremental_load();
-        } else if (scrollTop < 1) {
-          this.currentAlbum.incremental_load(false);
+          await this.currentAlbum.incremental_load();
+        } else if (0<= scrollTop && scrollTop < 1 ) {
+          await this.currentAlbum.incremental_load(false);
         }
       }
     });
