@@ -44,5 +44,49 @@ export default {
           .filter(({al, ver}) => (ver?.getTime() != al?.version?.getTime()) );
 
     }, //
+    async handleParams(ytify) {
+      // debug UI
+      const url = new URL(location.href);
+      const url_params = url.searchParams;
+
+      if (url_params.get("debug")) {
+        let _console = console;
+        ytify.$data.debug_mode = true;
+        console.log("debug_mode", ytify.$data.debug_mode);
+        console = {
+          log: (...args) => {
+            _console.log(...args);
+            ytify.$data.debug_out += args.join(" ") + "\n";
+          }
+        };
+      }
+
+      ytify.$data.user_id = url_params.get("uid") || "";
+
+      if (url_params.has("uid")) { // user_id given
+        const response = await this.axios.get("./api/check_user", { params: {user_id: ytify.$data.user_id} });
+
+        if (response.data.status == "ok") { // exists in DBV
+          ytify.$cookies.config(60 * 60 * 24 * 30, '');
+          ytify.$cookies.set('user_id', encodeURIComponent(ytify.$data.user_id));
+
+          // url param delete
+          url.searchParams.delete('uid');
+          history.pushState({}, '', url);
+        } else { // newly create
+          ytify.$vfm.show('addUserModal');
+        }
+
+      } else { //  not given. lookfor cookie
+        const uid = decodeURIComponent(ytify.$cookies.get('user_id'));
+        const response = await this.axios.get("./api/check_user", { params: {user_id: uid} });
+        if (response.data.status == "ok") {
+          ytify.$data.user_id = uid;
+        } else {
+          ytify.$data.user_id = "";
+        }
+      } // end if
+
+    },
 	}
 }

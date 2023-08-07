@@ -65,45 +65,8 @@ export default {
     ModalAddUser,
   },
   async created() {
-    const url = new URL(location.href);
-    const url_params = url.searchParams;
 
-    if (url_params.get("debug")) {
-      let _console = console;
-      this.debug_mode = true;
-      console.log("debug_mode", this.debug_mode);
-      console = {
-        log: (...args) => {
-          _console.log(...args);
-          this.debug_out += args.join(" ") + "\n";
-        }
-      };
-    }
-    this.user_id = url_params.get("uid") || "";
-
-    if (url_params.has("uid")) { // user_id given
-      const response = await axios.get("./api/check_user", { params: {user_id: this.user_id} });
-
-      if (response.data.status == "ok") { // exists in DBV
-        this.$cookies.config(60 * 60 * 24 * 30, '');
-        this.$cookies.set('user_id', encodeURIComponent(this.user_id));
-
-        // url param delete
-        url.searchParams.delete('uid');
-        history.pushState({}, '', url);
-      } else { // newly create
-        this.$vfm.show('addUserModal');
-      }
-
-    } else { //  not given. lookfor cookie
-      const uid = decodeURIComponent(this.$cookies.get('user_id'));
-      const response = await axios.get("./api/check_user", { params: {user_id: uid} });
-      if (response.data.status == "ok") {
-        this.user_id = uid;
-      } else {
-        this.user_id = "";
-      }
-    } // end if
+    await this.handleParams(this);
     console.log(`Wellcome '${this.user_id}'`);
     if (!this.user_id) this.icon = "lock";
 
@@ -135,6 +98,7 @@ export default {
   mounted() {
     this.$nextTick(() => {
       window.addEventListener('resize', this.onResize);
+      //FIXME: list item height update
     })
   },
   beforeDestroy() {
