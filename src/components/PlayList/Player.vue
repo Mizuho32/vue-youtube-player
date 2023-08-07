@@ -2,12 +2,14 @@
 import Vue from "vue";
 import axios from "axios";
 import VueAxios from "vue-axios";
-import PlayListItem from "./PlayListItem";
+import VueYoutube from 'vue-youtube'
 
+import PlayListItem from "./PlayListItem";
 import utils from './utils' 
 
 Vue.mixin(utils)   
 Vue.use(VueAxios, axios);
+Vue.use(VueYoutube);
 
 export default {
   name: "Player",
@@ -28,7 +30,7 @@ export default {
       isPlay: false,
       isDrag: false,
       isGrab: false,
-      isAutoPlay: false,
+      isAutoPlay: true,
       isLoop: false,
       isShuffle: false,
       isBuffering: false,
@@ -138,24 +140,11 @@ export default {
       console.log(`player init to ${this.playlist2attach}`, this.currentSong);
       this.changeVideo(videoId || this.currentSongInfo?.videoId || "");
     },
-    ready() {
-      // seek to the time (autoPlay) after video load finished
-      let vm = this;
-      let itv_id = setInterval(()=>{
-        vm.ytplayer.getVideoUrl().then(p=>{
-          if (p !== undefined && p.includes(vm.videoId)) {
-            console.log(`loaded video ${vm.currentSong} (${p})`, vm.ytplayer);
-            clearInterval(itv_id);
+    async ready() {
+      this.ytplayer.addEventListener('onStateChange', this.onPlayerStateChange);
 
-            let seekOnly = true
-            // A => B <=> !A or B
-            vm.autoPlay(!this.isAutoPlay || !seekOnly); // AutoPlay => not seek only
-          }
-
-          //console.log(vm.ytplayer);
-          vm.ytplayer.addEventListener('onStateChange', this.onPlayerStateChange);
-        });
-      }, 100);
+      const url = await this.ytplayer.getVideoUrl();
+      console.log(`loaded video ${this.currentSong} ${url}`);
     },
     onPlayerStateChange(event) {
       //console.log(`state change ${event.data}, loaded ${this.isLoaded}`);
@@ -172,12 +161,16 @@ export default {
     changeVideo(id) {
       if (this.videoId === id) return;
       this.videoId = id;
+
+      this.playerVars.start = this.currentSongInfo.start || 0;
+      this.playerVars.autoplay = Number(this.isAutoPlay);
+      console.log(`change to ${this.videoId} ${this.playerVars.start}`);
+
       this.youtube.updatePlayer(id);
       this.isLoaded = false;
     },
     async changeSong(click) {
       this.stopUpdateDuration();
-      this.pausePlay();
       this.currentTime = 0;
 
       let album = this.currentAlbum;
@@ -189,10 +182,6 @@ export default {
       let cindex = this.currentAlbum.index;
       await this.changeIndexAndVideo((cindex + click + total) % total);
 
-      let vm = this;
-      this.$nextTick(function() {
-        vm.autoPlay();
-      });
     },
     stopUpdateDuration() {
       let vm = this;
@@ -229,7 +218,7 @@ export default {
           }
         });
 
-      }, 1000);
+      }, 333);
     },
     paused() {
       this.stopUpdateDuration();
@@ -268,68 +257,12 @@ export default {
         console.log(`loopSong, nextidx ${nextIndex}`);
 
         await this.changeIndexAndVideo(nextIndex);
-        this.$nextTick(function() {
-          this.autoPlay();
-        });
         // this.stopUpdateDuration(); // called in init()
       }
     },
-    // FIXME: should be improved
-    async autoPlay(seekOnly = false) {
-      this.pausePlay(); // Wait load takes too much(?)
-
-      let start = this.currentSongInfo.start
-      let vm = this;
-
-      if (!typeof(start) === "number") return;
-
-      // Wait load
-      // await new Promise(resolve => setTimeout(resolve, 5000));
-      let wait_loaded = await this.waitUntil(()=>this.isLoaded, 10);
-
-      if (!wait_loaded) {
-        alert("failed to load video");
-        return
-      } else {
-        console.log("loaded");
-      }
-
-      // Seek
-      // FIXME: should see playerState? for when paused
-      this.ytplayer.playVideo();
-      let check_seek = async ()=>{
-        let current_time = await vm.ytplayer.getCurrentTime();
-
-        let msg = `seek to ${this.videoId} ${start} (player.getCurTime: ${current_time}, this.curTime: ${vm.currentTime})`;
-        console.log(msg);
-
-        if (Math.abs(current_time - start) <= 1.0) return true;
-        await vm.ytplayer.seekTo(start); // return player
-        return false;
-      };
-      let sought = await this.waitUntil(check_seek, 5, 500);
-
-      if (!sought) {
-        alert("failed to seek video");
-        return
-      }
-
-      // handle autoplay case
-      // actually is playing while !isAutoPlay, set isPlay = true
-      let playerState = await this.ytplayer.getPlayerState();
-      //console.log(`actually is playing ${playerState}`);
-      if (playerState == 1 || playerState == 3 || playerState == 5) this.isPlay = true;
-
-
-      //if (seekOnly) return;
-
-      vm.startPlay();
-    },
-
     async startPlay() {
       if (!this.videoId) { // first time
         this.init();
-        //this.autoPlay(true);
       }
 
       await this.ytplayer.playVideo();
@@ -389,8 +322,8 @@ export default {
 <template>
 <div>
   <div class="">
-    <youtube :player-vars="playerVars" ref="youtube" class="youtube"
-      @ended="loopSong" @playing="updateDuration" @paused="paused" @ready="ready" />
+    <youtube :player-vars="playerVars" ref="youtube" class="youtube" @ready="ready"
+             @ended="loopSong" @playing="updateDuration" @paused="paused" />
   </div>
   <div class="container-fluid">
     <div class="row">
