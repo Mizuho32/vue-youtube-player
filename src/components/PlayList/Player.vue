@@ -322,11 +322,39 @@ export default {
       this.ytplayer.seekTo(offset + this.newTime);
     },
 
+    pointerdown(event) {
+      this.down_at = event.clientX;
+      this.width = document.querySelector("#player").clientWidth;
+    },
+    pointermove(event) {
+      if (this.down_at) {
+        const clientX = event.touches[0].clientX;
+        const diff = (clientX - this.down_at) / this.width * 100 * 1.3; // 1.3 is rate
+        //console.log(this.down_at, this.width, Math.floor(clientX), Math.floor(diff));
+
+        if ( !this.set_volume ) {
+          if (Math.abs(diff) > 10) {
+            this.set_volume = true;
+            this.down_at = clientX;
+            this.base_vol = this.volume;
+          }
+        } else {
+          const new_vol = Math.max(0, Math.min(100, this.base_vol + diff)); // 0 <= vol <= 100
+          this.volume = new_vol;
+          this.ytplayer.setVolume(this.volume);
+        }
+      }
+    },
+    pointerup(event) {
+      this.down_at = undefined;
+      this.set_volume = false;
+    },
+
   }
 };
 </script>
 <template>
-<div>
+<div id="player" v-on:pointerdown="pointerdown" v-on:touchend="pointerup" v-on:touchmove="pointermove">
   <div class="">
     <youtube :player-vars="playerVars" ref="youtube" class="youtube" @ready="ready"
              @ended="loopSong" @playing="updateDuration" @paused="paused" />
