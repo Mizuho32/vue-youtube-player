@@ -238,6 +238,7 @@ export default {
       this.playlist2attach = "main";
       await this.init({playlist_name: this.playlist2attach, musicType: item.type, albumIndex: index, autoplay: true});
       console.log("selectSinger, p2a is ", this.playlist2attach);
+      this.navbar = "Playlist";
 
       /*if (this.musicType === "Daily Mix") {
         this.currentSinger = this.currentPlayList[this.currentIndex].singer;
