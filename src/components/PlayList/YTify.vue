@@ -212,8 +212,10 @@ export default {
 
       await this.currentAlbum.init_songs();
 
-      if (autoplay)
+      if (autoplay) {
         this.player.init(this.videoId);
+        this.player.startPlay();
+      }
     },
     followHandler(item) {
       item.isFollow = !item.isFollow;

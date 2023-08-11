@@ -159,15 +159,20 @@ export default {
       this.changeVideo(this.currentSongInfo.videoId);
     },
     changeVideo(id) {
-      if (this.videoId === id) return;
-      this.videoId = id;
 
       this.playerVars.start = this.currentSongInfo.start || 0;
       this.playerVars.autoplay = Number(this.isAutoPlay);
       console.log(`change to ${this.videoId} ${this.playerVars.start}`);
 
+      if (this.videoId === id) {
+        this.ytplayer.seekTo(this.playerVars.start);
+        return;
+      }
+
       this.youtube.updatePlayer(id);
+      this.videoId = id;
       this.isLoaded = false;
+
     },
     async changeSong(click) {
       this.stopUpdateDuration();
@@ -240,7 +245,7 @@ export default {
         console.log(`loopSong cIdx=${this.currentIndex}`);
 
         if (this.currentSongInfo.end)
-            this.ytplayer.pauseVideo();
+            this.pausePlay();
 
         let album = this.currentAlbum;
         let total = album.album_size;
@@ -257,6 +262,7 @@ export default {
         console.log(`loopSong, nextidx ${nextIndex}`);
 
         await this.changeIndexAndVideo(nextIndex);
+        await this.startPlay();
         // this.stopUpdateDuration(); // called in init()
       }
     },
