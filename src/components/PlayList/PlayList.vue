@@ -331,10 +331,6 @@ export default {
       if (this.musicType === "Daily Mix") {
         this.currentSinger = this.currentPlayList[this.currentIndex].singer;
       }
-
-      this.$nextTick(function() {
-        this.player.autoPlay();
-      });
     },
     get_currentAlbum(name = this.name) {
       let data = this.playlist_datas[name];

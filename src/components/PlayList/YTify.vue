@@ -242,11 +242,6 @@ export default {
       /*if (this.musicType === "Daily Mix") {
         this.currentSinger = this.currentPlayList[this.currentIndex].singer;
       }*/
-
-      this.$nextTick(function() {
-        this.player.autoPlay();
-        this.navbar = "Playlist";
-      });
     },
   }
 };
